@@ -1,0 +1,13 @@
+#!/usr/local/bin/av inject +GH_TOKEN /bin/sh
+# Run the no-mistakes daemon in the foreground, from a herdr pane.
+#
+# Start it this way and no other: never from launchd, and never with
+# `no-mistakes daemon start` or `daemon restart`. Started any other way the
+# pipeline's GitHub access silently stops working - no error, just failures.
+#
+# Stop an already-running daemon first, or this one cannot take the socket:
+#   no-mistakes daemon stop
+#
+# Editing this file invalidates the blessing; re-run:
+#   av bless ~/dotfiles/bin/no-mistakes-daemon
+exec "$HOME/.no-mistakes/bin/no-mistakes" daemon run --root "$HOME/.no-mistakes"

@@ -1,0 +1,5 @@
+#!/usr/local/bin/av inject +GH_TOKEN /bin/sh
+# Blessed launcher: hands Claude its GitHub token before it starts, so
+# routine gh calls don't stop for an approval prompt on every exec.
+# Editing this file invalidates the blessing; re-run: av bless ~/dotfiles/bin/cc
+exec claude --dangerously-skip-permissions "$@"

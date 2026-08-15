@@ -1,0 +1,6 @@
+#!/usr/local/bin/av inject +ANTHROPIC_API_KEY /bin/sh
+# Blessed launcher: injects ANTHROPIC_API_KEY before opencode starts, so the key
+# never lands in ~/.local/share/opencode/auth.json. Leave `opencode auth login`
+# alone: it writes credentials to disk in plaintext, which is what this avoids.
+# Editing this file invalidates the blessing; re-run: av bless ~/dotfiles/bin/oc
+exec opencode "$@"

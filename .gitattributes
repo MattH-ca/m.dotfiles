@@ -1,0 +1,6 @@
+# Claude Code owns writes to this file: /config and /effort rewrite `model` and
+# `effortLevel` in place, and home.nix links it out-of-store, so the live file IS
+# the repo file. Strip those two keys on the way into git - the rest of the file
+# (hooks, statusLine, permissions, theme) stays version controlled.
+# The filter is defined per clone; bootstrap.sh sets it up.
+home/.claude/settings.json filter=claude-volatile

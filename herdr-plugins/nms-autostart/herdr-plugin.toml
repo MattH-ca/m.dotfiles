@@ -1,0 +1,12 @@
+id = "matth.nms-autostart"
+name = "NMS daemon autostart"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+platforms = ["macos"]
+
+# Runs once after herdr restores the session and its API socket is ready.
+# Ensures the no-mistakes daemon is running in a visible "NMS" tab, since
+# session restore brings panes back as empty shells and the daemon must be
+# started from a herdr pane via the blessed launcher (see the repo CLAUDE.md).
+[[startup]]
+command = ["./startup.sh"]

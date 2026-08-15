@@ -1,0 +1,24 @@
+[
+  {
+    "plugin_id": "matth.nms-autostart",
+    "name": "NMS daemon autostart",
+    "version": "0.1.0",
+    "min_herdr_version": "0.8.0",
+    "manifest_path": "/Users/matth/dotfiles/herdr-plugins/nms-autostart/herdr-plugin.toml",
+    "plugin_root": "/Users/matth/dotfiles/herdr-plugins/nms-autostart",
+    "enabled": true,
+    "startup": [
+      {
+        "command": [
+          "./startup.sh"
+        ]
+      }
+    ],
+    "source": {
+      "kind": "local"
+    },
+    "warnings": [
+      "manifest does not declare platforms; platform support unknown"
+    ]
+  }
+]

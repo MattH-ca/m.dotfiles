@@ -1,0 +1,16 @@
+#!/usr/local/bin/av inject +GH_TOKEN /bin/sh
+# Blessed launcher for First Mate crewmates: hands claude its GitHub token
+# before it starts.
+#
+# Without it an unattended fleet stalls: every `gh` / `gh-axi` call a crewmate
+# makes waits on an approval dialog that nobody is there to answer.
+#
+# Wired in via firstmate's config/claude-launcher (untracked); fm-spawn.sh
+# reads that file and substitutes this path into the claude launch template.
+#
+# Pure passthrough on purpose: fm-spawn owns the flags, the model/effort
+# selection, and the encoded launch brief. Rewriting "$@" here would silently
+# break First Mate's adapter.
+#
+# Editing this file invalidates the blessing; re-run: av bless ~/dotfiles/bin/fm-claude
+exec claude "$@"

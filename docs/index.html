@@ -1,0 +1,2574 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Matth's reference guide for the reproducible macOS agentic engineering setup.">
+  <link rel="icon" href="data:,">
+  <title>Agentic Macbook Field Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --base: #232136;
+      --surface: #2a273f;
+      --overlay: #393552;
+      --muted: #908caa;
+      --subtle: #6e6a86;
+      --text: #e0def4;
+      --love: #eb6f92;
+      --gold: #f6c177;
+      --rose: #ea9a97;
+      --pine: #3e8fb0;
+      --foam: #9ccfd8;
+      --iris: #c4a7e7;
+      --highlight: #44415a;
+      --line: rgba(224, 222, 244, 0.13);
+      --sidebar-width: 286px;
+      --content-width: 1080px;
+      --radius: 8px;
+      --shadow: 0 18px 45px rgba(14, 13, 24, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--base);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(rgba(224, 222, 244, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(224, 222, 244, 0.025) 1px, transparent 1px);
+      background-size: 32px 32px;
+      content: "";
+      pointer-events: none;
+    }
+
+    a {
+      color: var(--foam);
+      text-decoration-color: rgba(156, 207, 216, 0.4);
+      text-underline-offset: 3px;
+    }
+
+    a:hover {
+      color: #c8ecf0;
+      text-decoration-color: currentColor;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      padding: 8px 12px;
+      transform: translateY(-160%);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .mobile-bar {
+      display: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 30;
+      width: var(--sidebar-width);
+      overflow-y: auto;
+      border-right: 1px solid var(--line);
+      background: rgba(35, 33, 54, 0.97);
+      box-shadow: 10px 0 30px rgba(14, 13, 24, 0.12);
+    }
+
+    .sidebar-inner {
+      display: flex;
+      min-height: 100%;
+      flex-direction: column;
+      padding: 26px 20px 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(235, 111, 146, 0.55);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--love);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 1px rgba(235, 111, 146, 0.08);
+    }
+
+    .brand-title {
+      display: block;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 750;
+    }
+
+    .brand-subtitle {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+
+    .search-wrap {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .search-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .search {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .search::placeholder {
+      color: var(--subtle);
+    }
+
+    .search-meta {
+      min-height: 19px;
+      margin-top: 6px;
+      color: var(--subtle);
+      font-size: 0.72rem;
+    }
+
+    .nav-label {
+      margin: 14px 10px 7px;
+      color: var(--subtle);
+      font-size: 0.69rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-list a {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 140ms ease;
+    }
+
+    .nav-list a:hover,
+    .nav-list a.active {
+      border-left-color: var(--love);
+      background: rgba(235, 111, 146, 0.08);
+      color: var(--text);
+    }
+
+    .nav-index {
+      min-width: 24px;
+      color: var(--subtle);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.7rem;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 22px 10px 0;
+      color: var(--subtle);
+      font-size: 0.72rem;
+    }
+
+    .shell {
+      margin-left: var(--sidebar-width);
+    }
+
+    main {
+      width: min(calc(100% - 48px), var(--content-width));
+      margin: 0 auto;
+      padding: 46px 0 96px;
+    }
+
+    .masthead {
+      margin-bottom: 46px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--love);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.77rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 880px;
+      margin-bottom: 14px;
+      font-size: clamp(2.25rem, 4vw, 3.65rem);
+      font-weight: 780;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      font-weight: 760;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      font-weight: 750;
+    }
+
+    .lede {
+      max-width: 780px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .masthead .section-intro {
+      margin-top: 12px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 24px 0;
+    }
+
+    .status {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: rgba(42, 39, 63, 0.72);
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.72rem;
+    }
+
+    .status::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--foam);
+      content: "";
+      box-shadow: 0 0 12px rgba(156, 207, 216, 0.65);
+    }
+
+    .terminal-figure {
+      position: relative;
+      overflow: hidden;
+      margin: 28px 0 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .terminal-figure img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 5;
+      object-fit: cover;
+      object-position: top left;
+    }
+
+    .terminal-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--line);
+      color: var(--subtle);
+      font-size: 0.76rem;
+    }
+
+    .guide-section {
+      padding: 48px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .guide-section[hidden] {
+      display: none;
+    }
+
+    .section-intro {
+      max-width: 800px;
+      margin: 0 0 28px;
+      color: var(--muted);
+    }
+
+    .callout {
+      margin: 22px 0;
+      padding: 16px 18px;
+      border-left: 3px solid var(--gold);
+      background: rgba(246, 193, 119, 0.07);
+      color: #eee9de;
+    }
+
+    .callout strong {
+      color: var(--gold);
+    }
+
+    .callout.warning {
+      border-left-color: var(--love);
+      background: rgba(235, 111, 146, 0.07);
+    }
+
+    .callout.warning strong {
+      color: var(--love);
+    }
+
+    .callout.info {
+      border-left-color: var(--foam);
+      background: rgba(156, 207, 216, 0.07);
+    }
+
+    .callout.info strong {
+      color: var(--foam);
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .architecture-node {
+      min-height: 132px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--pine);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .architecture-node:nth-child(2) {
+      border-top-color: var(--gold);
+    }
+
+    .architecture-node:nth-child(3) {
+      border-top-color: var(--love);
+    }
+
+    .architecture-node:nth-child(4) {
+      border-top-color: var(--foam);
+    }
+
+    .architecture-node:nth-child(5) {
+      border-top-color: var(--iris);
+    }
+
+    .architecture-node:nth-child(6) {
+      border-top-color: var(--rose);
+    }
+
+    .architecture-node p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .architecture-path {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--subtle);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.72rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(42, 39, 63, 0.6);
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--text);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td code {
+      white-space: nowrap;
+    }
+
+    .steps {
+      display: grid;
+      gap: 0;
+      margin: 24px 0 30px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 16px;
+      min-height: 96px;
+      counter-increment: step;
+    }
+
+    .step::before {
+      display: grid;
+      z-index: 1;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid rgba(196, 167, 231, 0.55);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--iris);
+      content: counter(step, decimal-leading-zero);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .step:not(:last-child)::after {
+      position: absolute;
+      top: 36px;
+      bottom: 0;
+      left: 17px;
+      width: 1px;
+      background: var(--line);
+      content: "";
+    }
+
+    .step-body {
+      padding: 2px 0 24px;
+    }
+
+    .step-body p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    code,
+    kbd {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      letter-spacing: 0;
+    }
+
+    :not(pre) > code {
+      padding: 2px 5px;
+      border: 1px solid rgba(196, 167, 231, 0.12);
+      border-radius: 3px;
+      background: rgba(196, 167, 231, 0.08);
+      color: #ddd0ef;
+      font-size: 0.88em;
+    }
+
+    kbd {
+      display: inline-block;
+      min-width: 25px;
+      padding: 2px 6px;
+      border: 1px solid var(--highlight);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.78em;
+      text-align: center;
+      box-shadow: inset 0 -1px 0 rgba(14, 13, 24, 0.45);
+    }
+
+    .code-shell {
+      position: relative;
+      margin: 16px 0 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #1f1d2e;
+      box-shadow: 0 10px 28px rgba(14, 13, 24, 0.18);
+    }
+
+    .code-head {
+      display: flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 10px 0 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--subtle);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+
+    .copy-button {
+      min-width: 58px;
+      height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .copy-button:hover {
+      border-color: rgba(156, 207, 216, 0.5);
+      color: var(--foam);
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      padding: 17px;
+      color: #e0def4;
+      font-size: 0.84rem;
+      line-height: 1.65;
+      tab-size: 2;
+    }
+
+    pre code {
+      font-size: inherit;
+    }
+
+    .comment {
+      color: var(--subtle);
+    }
+
+    .command {
+      color: var(--foam);
+    }
+
+    .value {
+      color: var(--gold);
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(42, 39, 63, 0.7);
+    }
+
+    .panel p:last-child,
+    .panel ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel-accent {
+      color: var(--foam);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    ul.clean {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    ul.clean li {
+      position: relative;
+      padding: 5px 0 5px 17px;
+    }
+
+    ul.clean li::before {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--rose);
+      content: "";
+    }
+
+    .tab-set {
+      margin: 24px 0;
+    }
+
+    .tab-list {
+      display: inline-flex;
+      max-width: 100%;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .tab-button {
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 750;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: var(--highlight);
+      color: var(--text);
+    }
+
+    .tab-panel {
+      padding-top: 18px;
+    }
+
+    .tab-panel[hidden] {
+      display: none;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--line);
+    }
+
+    .key-row {
+      display: flex;
+      min-height: 52px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 13px;
+      background: var(--surface);
+    }
+
+    .key-row span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .file-tree {
+      margin: 20px 0;
+      padding: 18px;
+      border-left: 2px solid var(--pine);
+      background: rgba(62, 143, 176, 0.06);
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.82rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    details {
+      border-bottom: 1px solid var(--line);
+    }
+
+    details:first-of-type {
+      border-top: 1px solid var(--line);
+    }
+
+    summary {
+      padding: 15px 0;
+      color: var(--text);
+      font-weight: 720;
+      cursor: pointer;
+    }
+
+    details > div {
+      padding: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: rgba(42, 39, 63, 0.55);
+    }
+
+    .check input {
+      width: 16px;
+      height: 16px;
+      margin-top: 4px;
+      accent-color: var(--love);
+    }
+
+    .check label {
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    .doc-link {
+      display: block;
+      min-height: 94px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .doc-link:hover {
+      border-color: rgba(156, 207, 216, 0.45);
+      background: var(--overlay);
+    }
+
+    .doc-link strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--foam);
+      font-size: 0.9rem;
+    }
+
+    .doc-link span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .no-results {
+      display: none;
+      padding: 60px 0;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .no-results.visible {
+      display: block;
+    }
+
+    .page-footer {
+      padding-top: 34px;
+      border-top: 1px solid var(--line);
+      color: var(--subtle);
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 980px) {
+      .mobile-bar {
+        position: sticky;
+        top: 0;
+        z-index: 25;
+        display: flex;
+        height: 52px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(35, 33, 54, 0.96);
+        backdrop-filter: blur(16px);
+      }
+
+      .mobile-title {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 750;
+      }
+
+      .menu-button {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+
+      .sidebar {
+        top: 52px;
+        width: min(88vw, 320px);
+        transform: translateX(-105%);
+        transition: transform 180ms ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .shell {
+        margin-left: 0;
+      }
+
+      main {
+        width: min(calc(100% - 32px), var(--content-width));
+        padding-top: 30px;
+      }
+
+      .architecture,
+      .grid-3,
+      .link-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        font-size: 15px;
+      }
+
+      h1 {
+        font-size: 2.35rem;
+      }
+
+      .guide-section {
+        padding: 38px 0;
+      }
+
+      .architecture,
+      .grid-2,
+      .grid-3,
+      .key-grid,
+      .link-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .terminal-figure img {
+        aspect-ratio: 16 / 7;
+      }
+
+      .terminal-caption {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .status-row {
+        gap: 6px;
+      }
+
+      .status {
+        font-size: 0.68rem;
+      }
+
+      pre {
+        font-size: 0.76rem;
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        background: white;
+        color: #17151f;
+      }
+
+      body::before,
+      .sidebar,
+      .mobile-bar,
+      .copy-button,
+      .search-wrap {
+        display: none !important;
+      }
+
+      .shell {
+        margin: 0;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      .guide-section {
+        break-inside: avoid;
+      }
+
+      a,
+      .section-intro,
+      .panel p,
+      .panel li,
+      td,
+      .step-body p {
+        color: #3e3849;
+      }
+
+      .panel,
+      .architecture-node,
+      .code-shell,
+      table {
+        background: #f5f3f7;
+        box-shadow: none;
+      }
+
+      pre {
+        color: #17151f;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to guide</a>
+
+  <header class="mobile-bar">
+    <span class="mobile-title">MACBOOK / FIELD GUIDE</span>
+    <button class="menu-button" id="menuButton" type="button" aria-label="Open guide navigation" aria-expanded="false" title="Guide navigation"><span aria-hidden="true">☰</span></button>
+  </header>
+
+  <aside class="sidebar" id="sidebar" aria-label="Guide navigation">
+    <div class="sidebar-inner">
+      <div class="brand">
+        <div class="brand-mark">&gt;_</div>
+        <div>
+          <span class="brand-title">Agentic Macbook</span>
+          <span class="brand-subtitle">Field guide</span>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <label class="search-label" for="guideSearch">Search the guide</label>
+        <input class="search" id="guideSearch" type="search" placeholder="Try: install, Herdr, Git..." autocomplete="off">
+        <div class="search-meta" id="searchMeta">Press / to search</div>
+      </div>
+
+      <div class="nav-label">System</div>
+      <ol class="nav-list">
+        <li><a href="#overview"><span class="nav-index">01</span>System map</a></li>
+        <li><a href="#daily-loop"><span class="nav-index">02</span>Daily loop</a></li>
+        <li><a href="#change-map"><span class="nav-index">03</span>What to edit</a></li>
+        <li><a href="#software"><span class="nav-index">04</span>Install software</a></li>
+      </ol>
+
+      <div class="nav-label">Tools</div>
+      <ol class="nav-list">
+        <li><a href="#terminal"><span class="nav-index">05</span>WezTerm + Micro</a></li>
+        <li><a href="#search-tools"><span class="nav-index">06</span>ripgrep + fzf</a></li>
+        <li><a href="#herdr"><span class="nav-index">07</span>Herdr</a></li>
+        <li><a href="#agents"><span class="nav-index">08</span>Agents</a></li>
+        <li><a href="#git"><span class="nav-index">09</span>Git + Lazygit</a></li>
+      </ol>
+
+      <div class="nav-label">Operations</div>
+      <ol class="nav-list">
+        <li><a href="#updates"><span class="nav-index">10</span>Updates</a></li>
+        <li><a href="#recovery"><span class="nav-index">11</span>Recovery</a></li>
+        <li><a href="#troubleshooting"><span class="nav-index">12</span>Troubleshooting</a></li>
+        <li><a href="#audit"><span class="nav-index">13</span>Audit</a></li>
+        <li><a href="#vault"><span class="nav-index">14</span>Automic Vault</a></li>
+        <li><a href="#references"><span class="nav-index">15</span>References</a></li>
+      </ol>
+
+      <div class="sidebar-footer">
+        Snapshot: July 31, 2026<br>
+        Target: Macbook / Apple Silicon
+      </div>
+    </div>
+  </aside>
+
+  <div class="shell">
+    <main id="main">
+      <header class="masthead">
+        <p class="eyebrow">matth@macbook : ~/dotfiles</p>
+        <h1>Your agentic engineering system, explained.</h1>
+        <p class="lede">A practical reference for understanding, changing, maintaining, and recovering the Mac setup we built together.</p>
+
+        <div class="status-row" aria-label="System status">
+          <span class="status">Determinate Nix</span>
+          <span class="status">nix-darwin 26.05</span>
+          <span class="status">Home Manager 26.05</span>
+          <span class="status">WezTerm + Herdr</span>
+          <span class="status">Claude + Codex + Hermes</span>
+          <span class="status">First Mate</span>
+        </div>
+
+        <figure class="terminal-figure">
+          <img src="assets/terminal-reference.png" alt="WezTerm using the Rose Pine Moon theme with the dotfiles Git prompt">
+          <figcaption class="terminal-caption">
+            <span>The finished terminal: Rosé Pine Moon, Hack Nerd Font, Starship, Zsh.</span>
+            <span>Source of truth: <code>~/dotfiles</code></span>
+          </figcaption>
+        </figure>
+      </header>
+
+      <section class="guide-section" id="overview" data-title="System map architecture Nix Home Manager Homebrew dotfiles">
+        <p class="eyebrow">01 / System map</p>
+        <h2>The mental model</h2>
+        <p class="section-intro">The setup is not one tool. It is a set of layers with clear ownership. Most confusion disappears once you know which layer owns a change.</p>
+
+        <div class="architecture">
+          <article class="architecture-node">
+            <span class="architecture-path">INSTALLER LAYER</span>
+            <h3>Determinate Nix</h3>
+            <p>Owns the Nix installation and daemon. This is why <code>nix.enable = false</code> in nix-darwin.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">SYSTEM LAYER</span>
+            <h3>nix-darwin</h3>
+            <p>Applies macOS preferences, system configuration, and the Homebrew declaration.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">USER LAYER</span>
+            <h3>Home Manager</h3>
+            <p>Installs user CLI tools and manages Zsh, Starship, environment variables, and links.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">MAC APP LAYER</span>
+            <h3>nix-homebrew</h3>
+            <p>Connects the existing <code>/opt/homebrew</code> installation to nix-darwin.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">CONFIG LAYER</span>
+            <h3>Dotfiles</h3>
+            <p>The Git repository is the durable source. Home paths point back to files in this repo.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">WORK LAYER</span>
+            <h3>WezTerm + Herdr</h3>
+            <p>WezTerm renders the terminal. Herdr keeps workspaces, panes, and agent sessions alive.</p>
+          </article>
+        </div>
+
+        <div class="callout info">
+          <strong>The core idea:</strong> edit the declaration, inspect the diff, apply it, verify the result, then commit it. Do not treat the generated files in <code>~/.zshrc</code> or the Nix store as the source.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Owns</th>
+                <th>Apply method</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>flake.nix</code></td>
+                <td>Pinned inputs and module wiring</td>
+                <td><code>./rebuild.sh</code></td>
+              </tr>
+              <tr>
+                <td><code>configuration.nix</code></td>
+                <td>macOS defaults, Homebrew formulae and casks</td>
+                <td><code>./rebuild.sh</code></td>
+              </tr>
+              <tr>
+                <td><code>home.nix</code></td>
+                <td>Nix packages, Zsh, Starship, aliases, symlinks</td>
+                <td><code>./rebuild.sh</code></td>
+              </tr>
+              <tr>
+                <td><code>home/.config/wezterm/wezterm.lua</code></td>
+                <td>Terminal appearance and startup behavior</td>
+                <td>Mostly hot-reloads; startup changes need <kbd>Cmd</kbd>+<kbd>Q</kbd></td>
+              </tr>
+              <tr>
+                <td><code>home/.config/herdr/config.toml</code></td>
+                <td>Herdr keys and UI preferences</td>
+                <td>Restart or reload Herdr when needed</td>
+              </tr>
+              <tr>
+                <td><code>home/AGENTS.md</code></td>
+                <td>Shared behavior for Claude, Codex, and OpenCode</td>
+                <td>Direct link; new agent sessions read it</td>
+              </tr>
+              <tr>
+                <td><code>home/.claude/settings.json</code></td>
+                <td>Claude theme, TUI, status line, permission prompt choice</td>
+                <td>Restart Claude when needed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Why the symlinks matter</h3>
+        <p>Home Manager creates managed paths such as <code>~/.config/wezterm</code>, but they ultimately point into <code>~/dotfiles</code>. An application reads its normal home-directory path while Git records the real file in the repository.</p>
+
+        <div class="file-tree">~/dotfiles
+|-- flake.nix                 # inputs and module graph
+|-- flake.lock                # exact pinned revisions
+|-- configuration.nix         # macOS and Homebrew
+|-- home.nix                  # user environment
+|-- bootstrap.sh              # first-machine setup
+|-- rebuild.sh                # apply future changes
+`-- home/
+    |-- AGENTS.md
+    |-- .claude/settings.json
+    `-- .config/
+        |-- wezterm/wezterm.lua
+        `-- herdr/config.toml</div>
+      </section>
+
+      <section class="guide-section" id="daily-loop" data-title="Daily loop edit diff rebuild verify commit push safe workflow">
+        <p class="eyebrow">02 / Daily loop</p>
+        <h2>The safe change cycle</h2>
+        <p class="section-intro">Use this loop for almost every configuration change. It keeps each decision visible and gives Git a clean recovery point.</p>
+
+        <div class="steps">
+          <article class="step">
+            <div class="step-body">
+              <h3>Start from the repository</h3>
+              <p>Confirm you are editing the durable source, not a generated file.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Edit one focused thing</h3>
+              <p>Use Micro and keep the change narrow enough to understand from the diff.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Inspect before applying</h3>
+              <p><code>git diff --check</code> catches whitespace errors. The normal diff shows exactly what behavior changed.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Apply and verify</h3>
+              <p>Run the rebuild only for Nix-owned files. Test the behavior as an end user would experience it.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Commit the proven result</h3>
+              <p>Stage only the intended files, write a factual message, push, and confirm the tree is clean.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-shell">
+          <div class="code-head"><span>Standard change cycle</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+git status --short
+
+micro configuration.nix
+
+git diff --check
+git --no-pager diff -- configuration.nix
+
+./rebuild.sh
+
+git add configuration.nix
+git commit -m "Describe the behavior changed"
+git push origin main
+git status --short</code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Expected clean result:</strong> the last <code>git status --short</code> prints nothing. Silence is success for that command.
+        </div>
+
+        <div class="callout warning">
+          <strong>One checkpoint at a time:</strong> explanations are not terminal commands. Only paste fenced command blocks into the shell.
+        </div>
+      </section>
+
+      <section class="guide-section" id="change-map" data-title="What to edit rebuild hot reload configuration file decision">
+        <p class="eyebrow">03 / What to edit</p>
+        <h2>Does this need a rebuild?</h2>
+        <p class="section-intro">The answer depends on whether Nix generates the result or an application reads a linked file directly.</p>
+
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">Rebuild required</span>
+            <h3>Nix-owned declarations</h3>
+            <ul class="clean">
+              <li>Add or remove a package in <code>home.nix</code></li>
+              <li>Add a Homebrew formula or cask</li>
+              <li>Change a macOS default</li>
+              <li>Add or remove a managed symlink</li>
+              <li>Change flake inputs or module wiring</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Usually direct</span>
+            <h3>Linked application config</h3>
+            <ul class="clean">
+              <li>WezTerm appearance changes hot-reload</li>
+              <li>Herdr reads its linked TOML configuration</li>
+              <li>Claude settings are already linked</li>
+              <li>Shared agent instructions are already linked</li>
+              <li>Startup-only behavior needs the app restarted</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="callout info">
+          <strong>New files and flakes:</strong> Git-backed flakes can ignore untracked files. If a new Nix file is referenced and the build cannot see it, run <code>git add path/to/new-file</code> before rebuilding. You do not need to commit it first.
+        </div>
+      </section>
+
+      <section class="guide-section" id="software" data-title="Install software Nix package Homebrew formula cask application remove upgrade npm global tmux treehouse axi no-mistakes">
+        <p class="eyebrow">04 / Install software</p>
+        <h2>Put software in the right list</h2>
+        <p class="section-intro">Use Nix for ordinary command-line tools when they exist in nixpkgs. Use Homebrew casks for macOS applications. Keep Homebrew formulae for tools that are Homebrew-specific or integrate better there.</p>
+
+        <div class="tab-set">
+          <div class="tab-list" role="tablist" aria-label="Software installation methods">
+            <button class="tab-button" id="tab-nix" type="button" role="tab" aria-selected="true" aria-controls="panel-nix">Nix CLI package</button>
+            <button class="tab-button" id="tab-brew" type="button" role="tab" aria-selected="false" aria-controls="panel-brew">Homebrew formula</button>
+            <button class="tab-button" id="tab-cask" type="button" role="tab" aria-selected="false" aria-controls="panel-cask">macOS cask</button>
+          </div>
+
+          <div class="tab-panel" id="panel-nix" role="tabpanel" aria-labelledby="tab-nix">
+            <h3>Example: add a terminal CLI tool</h3>
+            <p>Edit <code>home.nix</code> and add the nixpkgs attribute under <code>home.packages</code>.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>home.nix</span></div>
+              <pre><code>home.packages = with pkgs; [
+  bat
+  fd
+  fzf
+  git
+  hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
+  htop
+  jq
+  lazygit
+  micro
+  nodejs
+  opencode
+  pi-coding-agent
+  ripgrep
+  rsync
+  tmux
+  tree
+  treehouse.packages.${pkgs.stdenv.hostPlatform.system}.default
+  uv
+  wget
+  cowsay  <span class="comment"># example new package</span>
+  nerd-fonts.hack
+];</code></pre>
+            </div>
+            <p>Find the correct attribute at <a href="https://search.nixos.org/packages" target="_blank" rel="noreferrer">NixOS Package Search</a>, then rebuild and verify with <code>command -v tree</code>.</p>
+          </div>
+
+          <div class="tab-panel" id="panel-brew" role="tabpanel" aria-labelledby="tab-brew" hidden>
+            <h3>Example: add a Homebrew command-line formula</h3>
+            <p>Edit the <code>brews</code> list in <code>configuration.nix</code>.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>configuration.nix</span></div>
+              <pre><code>brews = [
+  "herdr"
+  "example-formula"
+];</code></pre>
+            </div>
+            <p>Use this when the package is not suitable in Nix or when its Homebrew integration matters.</p>
+          </div>
+
+          <div class="tab-panel" id="panel-cask" role="tabpanel" aria-labelledby="tab-cask" hidden>
+            <h3>Example: add a macOS application</h3>
+            <p>Edit the <code>casks</code> list in <code>configuration.nix</code>.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>configuration.nix</span></div>
+              <pre><code>casks = [
+  "wezterm"
+  "claude-code"
+  "codex"
+  "example-app"
+];</code></pre>
+            </div>
+            <p>Confirm the cask token at <a href="https://formulae.brew.sh/cask/" target="_blank" rel="noreferrer">Homebrew Cask search</a>, then rebuild.</p>
+          </div>
+        </div>
+
+        <h3>Apply and verify</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>After editing either file</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+git diff --check
+git --no-pager diff
+./rebuild.sh
+rehash
+command -v NAME || echo "NAME is missing"</code></pre>
+        </div>
+
+        <h3>Removing software</h3>
+        <p>Delete the declaration, rebuild, verify, and commit. Nix packages disappear from the active user profile. Homebrew items are removed on the next rebuild, because the cleanup policy is set to uninstall.</p>
+
+        <div class="callout warning">
+          <strong>Your current migration policy:</strong> <code>homebrew.onActivation.cleanup = "uninstall"</code>. Every rebuild removes any Homebrew formula or cask that isn't declared in <code>configuration.nix</code>, so a fresh Mac reproduces exactly this set. Removed apps' data and config files are left in place; wiping those too would need <code>"zap"</code>.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Currently declared</th>
+                <th>Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nix user packages</td>
+                <td><code>bat</code>, <code>fd</code>, <code>fzf</code>, <code>git</code>, Hermes Agent, <code>htop</code>, <code>jq</code>, <code>lazygit</code>, <code>micro</code>, <code>nodejs</code>, OpenCode, Pi coding agent, <code>ripgrep</code>, <code>rsync</code>, <code>tmux</code>, <code>tree</code>, Treehouse (flake input), <code>uv</code>, <code>wget</code>, Hack Nerd Font</td>
+              </tr>
+              <tr>
+                <td>Homebrew formulae</td>
+                <td><code>gh-cli</code> (Automic Vault), <code>herdr</code>, <code>docker</code> (CLI only), <code>ollama</code>, <code>llama.cpp</code></td>
+              </tr>
+              <tr>
+                <td>Homebrew casks</td>
+                <td>Automic Vault, WezTerm, OrbStack, Claude Code, Codex, OpenSuperWhisper, Mos, Obsidian, VeraCrypt, macFUSE</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>The container layer</h3>
+        <p>OrbStack is the container and Linux VM runtime, not Docker Desktop. The <code>docker</code> formula is only the CLI client; the daemon it talks to comes from OrbStack, which registers an <code>orbstack</code> Docker context and makes it current on first launch. OrbStack also drops <code>docker-compose</code> and <code>docker-buildx</code> into <code>~/.docker/cli-plugins</code>, so <code>docker compose</code> keeps working. Docker Desktop was never declared here; if it is still on the machine it is an undeclared leftover that Homebrew's cleanup will not touch, because it was installed from a <code>.dmg</code> rather than a cask.</p>
+
+        <h3>The npm layer (not managed by Nix)</h3>
+        <p><code>home.nix</code> sets <code>NPM_CONFIG_PREFIX</code> to <code>~/.npm-global</code> and puts its <code>bin</code> on the PATH, because the Nix-store Node.js is read-only. First Mate's worker CLIs are installed there imperatively: <code>gh-axi</code>, <code>chrome-devtools-axi</code>, <code>lavish-axi</code>, <code>tasks-axi</code>, <code>quota-axi</code>, and <code>gnhf</code>. The <code>no-mistakes</code> validation pipeline lives at <code>~/.no-mistakes/bin</code> (also on the PATH from <code>home.nix</code>); point <code>NO_MISTAKES_LINK_DIR</code> at that same directory when installing so it skips the one step that wants sudo. On a fresh Mac these need one reinstall pass; the README's "Agent worker tooling" section has the exact commands.</p>
+        <p>On this machine the no-mistakes daemon is not run from its launchd agent. Start it from a herdr pane with <code>~/dotfiles/bin/no-mistakes-daemon</code> (or the <code>nms</code> alias) and leave it in its own pane; herdr keeps it across disconnects and restarts.</p>
+        <p>Never run <code>no-mistakes daemon start</code> or <code>daemon restart</code>. Both silently break the pipeline's GitHub access, with no error to tell you. The full rationale lives in the private companion notes.</p>
+        <p>When a rebuild changes the PATH, existing terminal sessions keep the old one: home-manager guards its session variables with <code>__HM_SESS_VARS_SOURCED</code>, and every nested shell inherits the guard, so agents launched from a pre-rebuild shell see <code>command not found</code> for tools that are actually installed. Open a fresh WezTerm tab (or reboot) and restart long-lived hosts like the herdr server from it.</p>
+      </section>
+
+      <section class="guide-section" id="terminal" data-title="WezTerm Micro terminal editor shortcuts maximize opacity blur font Lua">
+        <p class="eyebrow">05 / WezTerm + Micro</p>
+        <h2>Your working surface</h2>
+        <p class="section-intro">WezTerm owns the terminal window. Zsh owns the shell inside it. Starship draws the prompt. Micro is the default text editor.</p>
+
+        <div class="grid-3">
+          <article class="panel">
+            <span class="panel-accent">WezTerm</span>
+            <h3>Window</h3>
+            <p>Opens maximized as a normal macOS window. The frame is reduced to resizing, so standard title buttons are not shown.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Zsh + Starship</span>
+            <h3>Prompt</h3>
+            <p>Autosuggestions, syntax highlighting, Git branch state, command duration, and a compact prompt.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Micro</span>
+            <h3>Editing</h3>
+            <p>A conventional terminal editor with familiar selection, copy, paste, undo, and search behavior.</p>
+          </article>
+        </div>
+
+        <h3>WezTerm settings in plain language</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lua setting</th>
+                <th>Current value</th>
+                <th>Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>color_scheme</code></td>
+                <td><code>rose-pine-moon</code></td>
+                <td>The terminal color palette</td>
+              </tr>
+              <tr>
+                <td><code>font</code></td>
+                <td><code>Hack Nerd Font</code></td>
+                <td>Text and prompt symbols</td>
+              </tr>
+              <tr>
+                <td><code>font_size</code></td>
+                <td><code>17.5</code></td>
+                <td>Your enlarged default text size</td>
+              </tr>
+              <tr>
+                <td><code>window_background_opacity</code></td>
+                <td><code>0.85</code></td>
+                <td>85 percent opaque, 15 percent transparent</td>
+              </tr>
+              <tr>
+                <td><code>macos_window_background_blur</code></td>
+                <td><code>50</code></td>
+                <td>Blur behind transparent terminal areas</td>
+              </tr>
+              <tr>
+                <td><code>window_decorations</code></td>
+                <td><code>RESIZE</code></td>
+                <td>Frameless appearance while retaining resize support</td>
+              </tr>
+              <tr>
+                <td><code>gui-startup</code></td>
+                <td><code>maximize()</code></td>
+                <td>Uses the available desktop without macOS full-screen mode</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-grid" aria-label="WezTerm shortcuts">
+          <div class="key-row"><span>Close current window</span><kbd>Cmd W</kbd></div>
+          <div class="key-row"><span>Quit WezTerm completely</span><kbd>Cmd Q</kbd></div>
+          <div class="key-row"><span>Minimize normal window</span><kbd>Cmd M</kbd></div>
+          <div class="key-row"><span>Toggle macOS full screen</span><kbd>Ctrl Cmd F</kbd></div>
+        </div>
+
+        <div class="callout info">
+          <strong>Hot reload:</strong> ordinary WezTerm appearance edits take effect when the linked Lua file is saved. The startup maximize handler runs only when the GUI starts, so use <kbd>Cmd</kbd>+<kbd>Q</kbd> and reopen WezTerm to test it.
+        </div>
+
+        <h3>Micro essentials</h3>
+        <div class="key-grid" aria-label="Micro shortcuts">
+          <div class="key-row"><span>Open a file</span><kbd>micro FILE</kbd></div>
+          <div class="key-row"><span>Save</span><kbd>Ctrl S</kbd></div>
+          <div class="key-row"><span>Quit</span><kbd>Ctrl Q</kbd></div>
+          <div class="key-row"><span>Find</span><kbd>Ctrl F</kbd></div>
+          <div class="key-row"><span>Select all</span><kbd>Ctrl A</kbd></div>
+          <div class="key-row"><span>Undo / redo</span><kbd>Ctrl Z / Y</kbd></div>
+          <div class="key-row"><span>Copy / paste in Micro</span><kbd>Ctrl C / V</kbd></div>
+          <div class="key-row"><span>Terminal selection copy</span><kbd>Cmd C</kbd></div>
+        </div>
+      </section>
+
+      <section class="guide-section" id="search-tools" data-title="ripgrep rg fzf fuzzy finder search files text project beginner guide">
+        <p class="eyebrow">06 / ripgrep + fzf</p>
+        <h2>Find text, then choose a result</h2>
+        <p class="section-intro">These are two separate tools that become especially useful together. <code>rg</code>, the ripgrep command, searches file contents. <code>fzf</code> gives you an interactive way to narrow and select lines from any list.</p>
+
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">ripgrep / rg</span>
+            <h3>Searches content</h3>
+            <p>Ask: "Which files contain this word or pattern?" It recursively searches from the current directory and normally respects <code>.gitignore</code>.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">fzf</span>
+            <h3>Selects from a list</h3>
+            <p>Ask: "Which one of these results do I want?" Type a few characters, move through the narrowed list, and press Enter.</p>
+          </article>
+        </div>
+
+        <h3>Start with ripgrep</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Useful rg searches</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+
+rg "home.packages"                 <span class="comment"># search every normal text file</span>
+rg -n "home.packages" home.nix     <span class="comment"># search one file with line numbers</span>
+rg -i "wezterm"                    <span class="comment"># ignore upper/lower case</span>
+rg -F 'a.literal.value'            <span class="comment"># treat punctuation literally</span>
+rg -g '*.nix' "homebrew"           <span class="comment"># search only Nix files</span>
+rg -l "claude"                     <span class="comment"># print matching filenames only</span>
+rg --files                         <span class="comment"># list searchable project files</span></code></pre>
+        </div>
+
+        <div class="callout info">
+          <strong>How to read a result:</strong> output usually has the form <code>path:line-number:matching text</code>. Start broad, then add a file path or <code>-g</code> filter when there are too many results.
+        </div>
+
+        <h3>When a search finds nothing</h3>
+        <p>By default, ripgrep skips hidden files, binary files, and ignored paths. Include hidden files while still excluding Git internals with:</p>
+        <div class="code-shell">
+          <div class="code-head"><span>Search hidden configuration</span></div>
+          <pre><code>rg --hidden -g '!.git' "creative_production_mcp" "$HOME/.codex"</code></pre>
+        </div>
+
+        <h3>Use fzf on its own</h3>
+        <div class="key-grid" aria-label="fzf controls">
+          <div class="key-row"><span>Narrow the list</span><kbd>Type letters</kbd></div>
+          <div class="key-row"><span>Move selection</span><kbd>Arrow keys</kbd></div>
+          <div class="key-row"><span>Choose selected item</span><kbd>Enter</kbd></div>
+          <div class="key-row"><span>Cancel without choosing</span><kbd>Esc</kbd></div>
+        </div>
+
+        <div class="code-shell">
+          <div class="code-head"><span>Choose a project file</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+rg --files | fzf</code></pre>
+        </div>
+        <p>The pipe character <code>|</code> sends the file list produced by <code>rg --files</code> into <code>fzf</code>. Choosing a line prints that filename back to the terminal.</p>
+
+        <h3>Open the selected file in Micro</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Search, choose, edit</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+file="$(rg --files | fzf)"
+[ -n "$file" ] &amp;&amp; micro "$file"</code></pre>
+        </div>
+
+        <h3>Search file contents, then choose a matching file</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Find content and open its file</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+file="$(rg -l "homebrew" | fzf)"
+[ -n "$file" ] &amp;&amp; micro "$file"</code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Current setup detail:</strong> both commands are installed. The optional fzf shell shortcuts such as fuzzy command history are not declared in <code>home.nix</code> yet, so this guide only relies on the working <code>fzf</code> command.
+        </div>
+      </section>
+
+      <section class="guide-section" id="herdr" data-title="Herdr help multiplexer workspace tab pane detach reattach split close stop server">
+        <p class="eyebrow">07 / Herdr</p>
+        <h2>Persistent agent workspaces</h2>
+        <p class="section-intro">Herdr sits inside WezTerm and keeps terminal work alive independently of the window. Closing WezTerm does not need to terminate your running agents.</p>
+
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">Structure</span>
+            <h3>Workspace -> tab -> pane</h3>
+            <p>A workspace groups a project. Tabs group tasks. Panes let you run an agent beside logs, Git, or another agent.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Agent awareness</span>
+            <h3>Working, waiting, done</h3>
+            <p>The side panel detects supported agents such as Claude and Codex and exposes their current state.</p>
+          </article>
+        </div>
+
+        <h3>Start, leave, and stop</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Herdr lifecycle</span></div>
+          <pre><code>herdr                 <span class="comment"># start or reattach</span>
+
+<span class="comment"># Inside Herdr: Ctrl-b, release, then q to detach</span>
+
+herdr server stop     <span class="comment"># actually stop the session and its panes</span></code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Prefix means two steps:</strong> press <kbd>Ctrl B</kbd>, release both keys, then press the action key. It is not one simultaneous chord.
+        </div>
+
+        <h3>Your configured keys</h3>
+        <div class="key-grid" aria-label="Herdr keybindings">
+          <div class="key-row"><span>New tab</span><kbd>Prefix C</kbd></div>
+          <div class="key-row"><span>Close tab</span><kbd>Prefix &amp;</kbd></div>
+          <div class="key-row"><span>Split top / bottom</span><kbd>Prefix "</kbd></div>
+          <div class="key-row"><span>Split left / right</span><kbd>Prefix %</kbd></div>
+          <div class="key-row"><span>Focus left / down</span><kbd>Prefix H / J</kbd></div>
+          <div class="key-row"><span>Focus up / right</span><kbd>Prefix K / L</kbd></div>
+          <div class="key-row"><span>Workspace picker</span><kbd>Prefix W</kbd></div>
+          <div class="key-row"><span>Go to target</span><kbd>Prefix G</kbd></div>
+          <div class="key-row"><span>Copy mode</span><kbd>Prefix Y</kbd></div>
+          <div class="key-row"><span>Show active help</span><kbd>Prefix ?</kbd></div>
+        </div>
+
+        <div class="callout info">
+          <strong>You can use the mouse:</strong> Herdr is mouse-native. Click tabs and panes, drag split borders, and use context menus while the keyboard model becomes familiar.
+        </div>
+
+        <h3>A useful project layout</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pane</th>
+                <th>Purpose</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Left</td>
+                <td>Primary implementation agent</td>
+                <td><code>cc</code> or <code>co</code></td>
+              </tr>
+              <tr>
+                <td>Top-right</td>
+                <td>Tests, server, or logs</td>
+                <td><code>npm test</code>, <code>docker compose logs -f</code></td>
+              </tr>
+              <tr>
+                <td>Bottom-right</td>
+                <td>Human review and Git state</td>
+                <td><code>git diff</code>, <code>git status --short</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guide-section" id="agents" data-title="Claude Code Codex OpenCode Pi Hermes First Mate aliases permissions AGENTS memory status line security sandbox crew">
+        <p class="eyebrow">08 / Agents</p>
+        <h2>Shared rules, different permission models</h2>
+        <p class="section-intro">Claude, Codex, and OpenCode share global instructions. Hermes is a separate personal agent, while First Mate is a writable agent distro that coordinates crews across registered projects.</p>
+
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">Claude Code</span>
+            <h3><code>cc</code></h3>
+            <p>Runs <code>claude --dangerously-skip-permissions</code>. Claude can act without approval prompts and is not protected by the Codex workspace sandbox.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Codex</span>
+            <h3><code>co</code></h3>
+            <p>Runs with <code>workspace-write</code> and no approval prompts. It can modify the active workspace, while access outside that sandbox is denied.</p>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">Hermes Agent</span>
+            <h3><code>hermes</code></h3>
+            <p>Installed from the official Hermes Nix flake. Run <code>hermes setup</code> once to select a provider, then run <code>hermes</code> for its terminal interface. Its credentials and mutable state remain local under <code>~/.hermes</code>.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">First Mate</span>
+            <h3><code>cd ~/firstmate &amp;&amp; claude</code></h3>
+            <p>The repository itself is the distro, so bootstrap clones it instead of putting it in the read-only Nix store. Launch a supported harness from that directory, register projects in chat, and approve crew dispatch only after considering the parallel work it will start.</p>
+          </article>
+        </div>
+
+        <div class="callout warning">
+          <strong>Security boundary:</strong> the <code>cc</code> and <code>co</code> aliases are intentionally autonomous. Start them only in a repository you trust. The planned sandbox network isolation is a separate security project and is not implemented by these dotfiles.
+        </div>
+
+        <h3>One instruction source</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Managed links</span></div>
+          <pre><code>~/.claude/CLAUDE.md            -> ~/dotfiles/home/AGENTS.md
+~/.codex/AGENTS.md             -> ~/dotfiles/home/AGENTS.md
+~/.config/opencode/AGENTS.md   -> ~/dotfiles/home/AGENTS.md</code></pre>
+        </div>
+
+        <p>Edit <code>home/AGENTS.md</code> when a preference should apply to Claude, Codex, and OpenCode. Use project-local instruction files when a rule only belongs to one repository. Hermes and First Mate maintain their own operational state and instructions.</p>
+
+        <h3>First Mate project workflow</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Register first, then dispatch</span></div>
+          <pre><code>gh auth login
+cd "$HOME/firstmate"
+claude
+
+<span class="comment"># In chat:</span>
+Add https://github.com/OWNER/REPO as a no-mistakes project.
+Do not start any work yet.</code></pre>
+        </div>
+        <p>First Mate keeps its managed clones under <code>~/firstmate/projects</code> and gives workers isolated worktrees. Use <code>no-mistakes</code> for its full validation and PR pipeline, <code>direct-PR</code> for a faster PR path, or <code>local-only</code> when no remote is required.</p>
+        <p>Its worker tooling is fully installed on this machine: <code>tmux</code> hosts each worker session, Treehouse provides the isolated worktree pool, <code>tasks-axi</code> is the durable task queue, <code>quota-axi</code> checks usage headroom before dispatch, <code>gh-axi</code> / <code>chrome-devtools-axi</code> / <code>lavish-axi</code> cover GitHub, browser, and report work, and <code>no-mistakes</code> gates deliveries. The <code>lavish</code>, <code>gnhf</code>, and <code>no-mistakes</code> agent skills are installed globally.</p>
+        <p>The <code>no-mistakes</code> daemon is a single shared instance serving every lane, so restarting it kills other lanes' in-flight pipeline runs. Leave it to First Mate; restart it by hand only when nothing is running.</p>
+
+        <h3>Claude status line</h3>
+        <p>The managed Claude settings use <code>jq</code> to read Claude's status payload and display the active model plus context-window usage. That is why <code>jq</code> is part of the Nix user package list.</p>
+
+        <h3>Authentication is deliberately not in Git</h3>
+        <p>OAuth sessions, tokens, keychain entries, <code>auth.json</code>, histories, logs, and local plugin cache state should remain local. Configuration is reproducible; credentials must be restored interactively.</p>
+      </section>
+
+      <section class="guide-section" id="git" data-title="Git GitHub Lazygit review diff stage unstage commit push maintenance fork upstream sync undo pager END">
+        <p class="eyebrow">09 / Git + Lazygit</p>
+        <h2>Maintain the source of truth</h2>
+        <p class="section-intro">Git records each proven setup change. Lazygit is a visual terminal interface for reviewing and operating that same Git repository. GitHub protects the checkpoints from loss and lets the fork receive upstream improvements.</p>
+
+        <h3>What Lazygit is showing you</h3>
+        <div class="grid-3">
+          <article class="panel">
+            <span class="panel-accent">Unstaged</span>
+            <h3>Edited, not selected</h3>
+            <p>The file changed on disk, but its changes are not yet selected for the next commit.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Staged</span>
+            <h3>Selected for commit</h3>
+            <p>These are the exact changes Git will include when you create the next checkpoint.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Committed</span>
+            <h3>Saved in history</h3>
+            <p>The snapshot has a message and ID. It remains local until pushed to GitHub.</p>
+          </article>
+        </div>
+
+        <div class="callout info">
+          <strong>Lazygit does not replace Git:</strong> pressing a key in Lazygit runs an ordinary Git operation. Learning the three states above matters more than memorizing the interface.
+        </div>
+
+        <h3>Your first Lazygit session</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Open it inside a repository</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+lazygit</code></pre>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <div class="step-body">
+              <h3>Go to the Files panel</h3>
+              <p>Use the arrow keys to focus changed files. The large pane shows the diff for the selected file.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Read the diff before staging</h3>
+              <p>Red lines are removed; green lines are added. Confirm every line belongs in the same checkpoint.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Press Space to stage the selected file</h3>
+              <p>Press Space again to unstage it. Enter opens the staging view when you need to select smaller hunks or lines.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Press lowercase C to commit staged changes</h3>
+              <p>Enter a factual message and use the confirmation key shown in the interface. Current macOS releases commonly use <kbd>Cmd Enter</kbd>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Press Shift-P to push, then Q to quit</h3>
+              <p>After leaving Lazygit, confirm the repository is clean with <code>git status --short</code>.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="key-grid" aria-label="Lazygit beginner keys">
+          <div class="key-row"><span>Contextual key help</span><kbd>?</kbd></div>
+          <div class="key-row"><span>Move through items</span><kbd>Arrow keys</kbd></div>
+          <div class="key-row"><span>Stage / unstage selected file</span><kbd>Space</kbd></div>
+          <div class="key-row"><span>Open line staging view</span><kbd>Enter</kbd></div>
+          <div class="key-row"><span>Commit staged changes</span><kbd>c</kbd></div>
+          <div class="key-row"><span>Fetch remote state</span><kbd>f</kbd></div>
+          <div class="key-row"><span>Pull current branch</span><kbd>p</kbd></div>
+          <div class="key-row"><span>Push current branch</span><kbd>P / Shift P</kbd></div>
+          <div class="key-row"><span>Quit Lazygit</span><kbd>q</kbd></div>
+          <div class="key-row"><span>Cancel a dialog</span><kbd>Esc</kbd></div>
+        </div>
+
+        <div class="callout warning">
+          <strong>Be careful with discard:</strong> <kbd>D</kbd> opens destructive options for working-tree changes. Do not use it until you have reviewed the diff and intentionally want to lose those edits.
+        </div>
+
+        <h3>Lazygit action to Git command</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lazygit action</th>
+                <th>Underlying idea</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Stage a file</td>
+                <td><code>git add path/to/file</code></td>
+              </tr>
+              <tr>
+                <td>Unstage a file</td>
+                <td><code>git restore --staged path/to/file</code></td>
+              </tr>
+              <tr>
+                <td>Commit</td>
+                <td><code>git commit -m "Message"</code></td>
+              </tr>
+              <tr>
+                <td>Fetch</td>
+                <td><code>git fetch</code></td>
+              </tr>
+              <tr>
+                <td>Pull</td>
+                <td><code>git pull</code></td>
+              </tr>
+              <tr>
+                <td>Push</td>
+                <td><code>git push</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Normal maintenance</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Review, commit, publish</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+git status --short
+git diff --check
+git --no-pager diff
+
+git add path/to/changed-file
+git commit -m "Describe the behavior changed"
+git push origin main
+git status --short</code></pre>
+        </div>
+
+        <div class="callout info">
+          <strong>Stage explicitly:</strong> the <code>add</code> alias runs <code>git add .</code>, which stages everything. Prefer <code>git add path</code> when you want a controlled checkpoint.
+        </div>
+
+        <h3>Understand the remotes</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Remote</th>
+                <th>Repository</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>origin</code></td>
+                <td><code>MattH-ca/m.dotfiles</code></td>
+                <td>Your repo. Push your commits here.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Inspect upstream before merging</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Read-only upstream check</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+git fetch upstream
+git log --oneline --left-right main...upstream/main</code></pre>
+        </div>
+        <p>Lines beginning with <code>&lt;</code> are unique to your fork. Lines beginning with <code>&gt;</code> are new upstream. Review upstream changes before merging because your editor, Dock, packages, and safety choices intentionally differ.</p>
+
+        <div class="code-shell">
+          <div class="code-head"><span>Merge after review</span></div>
+          <pre><code>git switch main
+git merge upstream/main
+./rebuild.sh
+git push origin main</code></pre>
+        </div>
+
+        <div class="callout warning">
+          <strong>Do not blindly sync the fork:</strong> use a normal merge and resolve conflicts deliberately. Avoid <code>git reset --hard</code> and avoid force-pushing customized <code>main</code>.
+        </div>
+
+        <h3>Small recoveries</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Command</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Leave Git's <code>(END)</code> pager</td>
+                <td><kbd>Q</kbd></td>
+              </tr>
+              <tr>
+                <td>Discard one uncommitted file change</td>
+                <td><code>git restore path/to/file</code></td>
+              </tr>
+              <tr>
+                <td>Unstage without discarding edits</td>
+                <td><code>git restore --staged path/to/file</code></td>
+              </tr>
+              <tr>
+                <td>Undo a published commit safely</td>
+                <td><code>git revert COMMIT_SHA</code></td>
+              </tr>
+              <tr>
+                <td>Confirm GitHub authentication</td>
+                <td><code>gh auth status</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guide-section" id="updates" data-title="Update upgrade flake lock Nix Homebrew Claude Codex WezTerm Herdr maintenance">
+        <p class="eyebrow">10 / Updates</p>
+        <h2>Update intentionally</h2>
+        <p class="section-intro">Pinned inputs give you repeatability. Updating is a deliberate change that should be reviewed, rebuilt, tested, and committed.</p>
+
+        <h3>Nix inputs</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Advance pinned revisions</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+git status --short
+nix flake update
+git --no-pager diff -- flake.lock
+./rebuild.sh
+git add flake.lock
+git commit -m "Update Nix flake inputs"
+git push origin main</code></pre>
+        </div>
+        <p>The release branches remain <code>26.05</code>, while <code>flake.lock</code> advances to newer exact revisions on those branches.</p>
+
+        <h3>Homebrew-managed software</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Inspect before upgrading</span></div>
+          <pre><code>brew outdated
+
+<span class="comment"># Upgrade a specific declared tool after reviewing the list</span>
+brew upgrade herdr
+brew upgrade --cask wezterm claude-code codex</code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Keep updates small:</strong> update one layer at a time when possible. It makes failures easier to attribute and rollback.
+        </div>
+      </section>
+
+      <section class="guide-section" id="recovery" data-title="Recovery new Mac bootstrap clone reproduce migrate restore authentication">
+        <p class="eyebrow">11 / Recovery</p>
+        <h2>Rebuild the setup on another Mac</h2>
+        <p class="section-intro">The repository reproduces declared configuration. Authentication, private data, and undeclared Homebrew extras remain separate.</p>
+
+        <div class="steps">
+          <article class="step">
+            <div class="step-body">
+              <h3>Prepare macOS</h3>
+              <p>Use the correct macOS account name, sign in to GitHub, and confirm Apple Silicon architecture where expected.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Clone your fork</h3>
+              <p>Put the repository at <code>~/dotfiles</code>. The bootstrap also maintains the stable <code>~/.dotfiles</code> link.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Run the bootstrap</h3>
+              <p>It installs or detects Determinate Nix, personalizes the user, runs the first nix-darwin switch, and clones First Mate into <code>~/firstmate</code>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Authenticate applications</h3>
+              <p>GitHub, Claude, Codex, Hermes providers, and any private services require interactive login. Secrets are not stored in the repository.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Audit the result</h3>
+              <p>Check commands, links, macOS defaults, Git state, and the actual UI.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-shell">
+          <div class="code-head"><span>Fresh-machine path</span></div>
+          <pre><code>cd "$HOME"
+git clone https://github.com/MattH-ca/m.dotfiles.git dotfiles
+cd "$HOME/dotfiles"
+./bootstrap.sh</code></pre>
+        </div>
+
+        <div class="callout warning">
+          <strong>Home Manager collisions:</strong> if activation says a file would be clobbered, stop and inspect that file. Move or delete it only after confirming it is disposable. Do not blindly force overwrites.
+        </div>
+
+        <h3>What is not reproduced automatically</h3>
+        <ul>
+          <li>GitHub, Claude, Codex, and Hermes login sessions or provider keys</li>
+          <li>SSH private keys and Keychain contents</li>
+          <li>Repositories other than the dotfiles fork and the fresh First Mate clone</li>
+          <li>The npm-installed worker CLIs (see the README's "Agent worker tooling" section for the reinstall commands)</li>
+          <li>Wallpaper choice and other intentionally manual personal content</li>
+          <li>The planned isolated sandbox network</li>
+        </ul>
+      </section>
+
+      <section class="guide-section" id="troubleshooting" data-title="Troubleshooting errors Nix missing darwin rebuild clobber zsh completion menu Dock Herdr MCP Node pager">
+        <p class="eyebrow">12 / Troubleshooting</p>
+        <h2>Known fixes from this build</h2>
+        <p class="section-intro">These are the failures we actually encountered and the reasoning behind each fix.</p>
+
+        <details>
+          <summary><code>nix: command not found</code> in an older shell</summary>
+          <div>
+            <p>The shell started before Nix was added to its environment. Load the daemon profile, then open a fresh login shell.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Refresh Nix environment</span></div>
+              <pre><code>source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+exec zsh -l
+nix --version</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>sudo: darwin-rebuild: command not found</code></summary>
+          <div>
+            <p><code>sudo</code> did not inherit the user path. The repaired <code>rebuild.sh</code> calls the absolute system path, so use the helper:</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Correct rebuild path</span></div>
+              <pre><code>cd "$HOME/dotfiles"
+./rebuild.sh</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Home Manager says an existing file would be clobbered</summary>
+          <div>
+            <p>A real file already occupies a path Home Manager wants to manage. Inspect it, back it up if valuable, then remove or relocate it before rebuilding. During this setup, the conflicts were <code>~/.zshrc</code> and <code>~/.config/starship.toml</code>.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Zsh reports a missing Homebrew <code>_brew</code> completion</summary>
+          <div>
+            <p>A stale symlink can remain after completion packages change. Confirm it is a broken symlink before removing it, then regenerate the Zsh completion cache.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Repair stale completion state</span></div>
+              <pre><code>ls -l /opt/homebrew/share/zsh/site-functions/_brew
+test -L /opt/homebrew/share/zsh/site-functions/_brew &amp;&amp; \
+  rm /opt/homebrew/share/zsh/site-functions/_brew
+find "$HOME" -maxdepth 1 -name '.zcompdump*' -delete
+exec zsh -l</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>WezTerm appearance changes, but startup behavior does not</summary>
+          <div>
+            <p>Most Lua settings hot-reload. The <code>gui-startup</code> handler only runs when the WezTerm GUI starts. Use <kbd>Cmd Q</kbd>, then reopen WezTerm.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>The Dock or menu bar does not match the declaration</summary>
+          <div>
+            <p>Read the active macOS values. A value of <code>1</code> means auto-hide is enabled; <code>0</code> means disabled.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Inspect macOS UI defaults</span></div>
+              <pre><code>printf 'Menu bar autohide: '
+defaults read NSGlobalDomain _HIHideMenuBar
+
+printf 'Dock autohide: '
+defaults read com.apple.dock autohide</code></pre>
+            </div>
+            <p>Your declared state is menu bar auto-hide <code>1</code> and Dock auto-hide <code>0</code>.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Herdr appears stuck or you cannot get back to the normal shell</summary>
+          <div>
+            <p>Detach with <kbd>Ctrl B</kbd>, release, then <kbd>Q</kbd>. Run <code>herdr</code> later to reattach. Use <code>herdr server stop</code> only when you intend to terminate the session.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>An agent plugin MCP fails because <code>node</code> is missing</summary>
+          <div>
+            <p>Node.js is now declared in <code>home.nix</code>. After a rebuild, verify <code>command -v node</code>. Do not install another ad hoc Node copy to solve the same dependency.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Git output shows <code>(END)</code></summary>
+          <div>
+            <p>You are in Git's pager, not a frozen terminal. Press <kbd>Q</kbd>. Use <code>git --no-pager diff</code> when you want output printed directly.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="guide-section" id="audit" data-title="Audit checklist verify status clean commands links defaults services">
+        <p class="eyebrow">13 / Audit</p>
+        <h2>Run a system check</h2>
+        <p class="section-intro">This audit is read-only. It checks repository cleanliness, important command paths, macOS behavior, managed links, GitHub authentication, and services.</p>
+
+        <div class="code-shell">
+          <div class="code-head"><span>Read-only audit</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+
+printf 'Repository: '
+test -z "$(git status --porcelain)" &amp;&amp; echo CLEAN || git status --short
+
+printf 'Menu bar autohide: '
+defaults read NSGlobalDomain _HIHideMenuBar
+
+printf 'Dock autohide: '
+defaults read com.apple.dock autohide
+
+for cmd in nix brew darwin-rebuild micro node fzf jq rg lazygit gh herdr hermes claude codex opencode pi wezterm
+do
+  printf '%-16s %s\n' "$cmd" "$(command -v "$cmd" || echo MISSING)"
+done
+
+printf '\nManaged instruction links:\n'
+ls -l "$HOME/.claude/CLAUDE.md" "$HOME/.codex/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+
+printf '\nFirst Mate clone:\n'
+git -C "$HOME/firstmate" status --short --branch
+
+printf '\nGitHub authentication:\n'
+gh auth status
+
+printf '\nHomebrew services:\n'
+brew services list</code></pre>
+        </div>
+
+        <h3>Expected results</h3>
+        <div class="checklist">
+          <div class="check">
+            <input id="audit-clean" type="checkbox">
+            <label for="audit-clean">Repository says <code>CLEAN</code>.</label>
+          </div>
+          <div class="check">
+            <input id="audit-menu" type="checkbox">
+            <label for="audit-menu">Menu bar auto-hide is <code>1</code>.</label>
+          </div>
+          <div class="check">
+            <input id="audit-dock" type="checkbox">
+            <label for="audit-dock">Dock auto-hide is <code>0</code>.</label>
+          </div>
+          <div class="check">
+            <input id="audit-paths" type="checkbox">
+            <label for="audit-paths">No required command reports <code>MISSING</code>.</label>
+          </div>
+          <div class="check">
+            <input id="audit-links" type="checkbox">
+            <label for="audit-links">Claude, Codex, and OpenCode instruction files are symbolic links.</label>
+          </div>
+          <div class="check">
+            <input id="audit-auth" type="checkbox">
+            <label for="audit-auth">GitHub CLI reports the correct authenticated account.</label>
+          </div>
+          <div class="check">
+            <input id="audit-ui" type="checkbox">
+            <label for="audit-ui">WezTerm opens maximized with the expected font, opacity, and colors.</label>
+          </div>
+        </div>
+      </section>
+
+      <section class="guide-section" id="vault" data-title="Automic Vault av secrets keychain harden gh Secret Gate inject save bless scan doctor approval agents credentials tokens isotope tap cask hardened wrapper">
+        <p class="eyebrow">14 / Automic Vault</p>
+        <h2>Gate secret access, especially for agents</h2>
+        <p class="section-intro">Autonomous agents run shell commands as you, so anything that can read a token from a plain file or an ambient credential helper can read it too. Automic Vault moves secrets into the Keychain and puts a human-approval gate between your tools and those secrets. It ships in this setup as a Homebrew tap, a hardened <code>gh</code>, and a menu bar app.</p>
+
+        <div class="grid-3">
+          <article class="panel">
+            <span class="panel-accent">Vault</span>
+            <h3>Secrets in the Keychain</h3>
+            <p>Tokens and keys are stored in the macOS login Keychain instead of plaintext config files, so they never sit on disk for a process to read.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Wrapper</span>
+            <h3>Hardened tools</h3>
+            <p>A hardened tool is replaced on <code>PATH</code> by a codesigned build that only it can unlock, and every authenticated use routes through the gate. Here, <code>gh</code> is hardened.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Gate</span>
+            <h3>Approval prompts</h3>
+            <p>When a gated secret is requested and the current trust level cannot auto-approve it, the menu bar app raises a notification for you to approve or deny.</p>
+          </article>
+        </div>
+
+        <div class="callout info">
+          <strong>The command is <code>av</code></strong> (the app is spelled "Automic Vault," not "Atomic"). <code>av help</code> lists everything; <code>av doctor</code> reports whether the hardened tools are healthy.
+        </div>
+
+        <h3>How it is wired here</h3>
+        <p>Three declarations install it, plus one <code>PATH</code> entry so the <code>av</code> command resolves. A fresh <code>rebuild.sh</code> brings all of this along, which is why an agent's first <code>gh</code> call can surface an approval prompt.</p>
+        <div class="code-shell">
+          <div class="code-head"><span>configuration.nix and home.nix</span></div>
+          <pre><code><span class="comment"># configuration.nix - trusted tap, hardened gh, the app</span>
+taps  = [ { name = "automic-vault/isotopes"; trusted = true; } ];
+brews = [ "automic-vault/isotopes/gh-cli" ];
+casks = [ "automic-vault" ];
+
+<span class="comment"># home.nix - put the av CLI on PATH</span>
+home.sessionPath = [ "/Applications/Automic Vault.app/Contents/MacOS" ];</code></pre>
+        </div>
+
+        <h3>Everyday commands</h3>
+        <div class="code-shell">
+          <div class="code-head"><span>Audit and verify</span></div>
+          <pre><code>av doctor          <span class="comment"># are the hardened tools healthy?</span>
+av scan            <span class="comment"># audit secrets and configuration (a report, not an error)</span>
+av harden sudo     <span class="comment"># optional: enable Touch ID for sudo</span></code></pre>
+        </div>
+        <p><code>av scan</code> prints an audit of findings by severity. A wall of <code>HIGH</code> findings is the report doing its job, not a crash; on a Nix and Homebrew Mac the <code>PATH</code>-ordering findings are inherent and expected.</p>
+
+        <h3>Store and inject your own secrets</h3>
+        <p>Instead of exporting a key in a dotfile or a <code>.env</code>, keep it in the vault and hand it to one command for the duration of that command only.</p>
+        <div class="code-shell">
+          <div class="code-head"><span>save, then inject</span></div>
+          <pre><code>av save OPENAI_API_KEY                       <span class="comment"># prompts for the value; stores it in the Keychain</span>
+av inject +OPENAI_API_KEY -- python train.py <span class="comment"># the key exists only inside this process</span></code></pre>
+        </div>
+        <p>For a script you run often, put <code>av inject</code> in its shebang and <code>av bless</code> the file. Blessing approves that exact file, so any edit to it voids the approval - an agent cannot append a line to a blessed script and keep its secret access.</p>
+        <div class="code-shell">
+          <div class="code-head"><span>a blessed script</span></div>
+          <pre><code><span class="comment">#!/usr/local/bin/av inject +OPENAI_API_KEY /bin/zsh -f</span>
+python eval.py
+
+<span class="comment"># then approve the exact file once:</span>
+av bless ./run-eval.sh</code></pre>
+        </div>
+
+        <div class="callout warning">
+          <strong>Tuning agent prompts:</strong> the hardened <code>gh</code> uses a Secret Gate with per-app trust levels, set in the menu bar app (<code>av open --secret-gate gh</code>). Raising the <em>All Apps</em> default from <code>Read Only</code> to <code>Local Write Access</code> quiets routine clone and checkout prompts while still asking before remote mutations (<code>push</code>, <code>pr create</code>) and raw token extraction (<code>gh auth token</code>). Token extraction always prompts.
+        </div>
+
+        <h3>Keep GitHub tokens out of reach</h3>
+        <p>An HTTPS remote plus the <code>osxkeychain</code> credential helper lets any process retrieve your GitHub token through <code>git credential fill</code>. Prefer SSH remotes, which are not extractable that way.</p>
+        <div class="code-shell">
+          <div class="code-head"><span>Switch a repo to SSH</span></div>
+          <pre><code>git remote set-url origin git@github.com:OWNER/REPO.git
+printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span class="comment"># drop the cached token</span></code></pre>
+        </div>
+      </section>
+
+      <section class="guide-section" id="references" data-title="References documentation links Nix Darwin Home Manager Herdr WezTerm Micro GitHub Hermes First Mate">
+        <p class="eyebrow">15 / References</p>
+        <h2>Documentation</h2>
+
+        <div class="link-grid">
+          <a class="doc-link" href="https://github.com/MattH-ca/m.dotfiles" target="_blank" rel="noreferrer">
+            <strong>Your dotfiles</strong>
+            <span>The published source and recovery checkpoint.</span>
+          </a>
+          <a class="doc-link" href="https://docs.determinate.systems/determinate-nix/" target="_blank" rel="noreferrer">
+            <strong>Determinate Nix</strong>
+            <span>Installer, daemon, configuration, and troubleshooting.</span>
+          </a>
+          <a class="doc-link" href="https://nix-darwin.github.io/nix-darwin/manual/" target="_blank" rel="noreferrer">
+            <strong>nix-darwin options</strong>
+            <span>macOS defaults and Homebrew module reference.</span>
+          </a>
+          <a class="doc-link" href="https://nix-community.github.io/home-manager/options.xhtml" target="_blank" rel="noreferrer">
+            <strong>Home Manager options</strong>
+            <span>User packages, programs, files, and session variables.</span>
+          </a>
+          <a class="doc-link" href="https://search.nixos.org/packages" target="_blank" rel="noreferrer">
+            <strong>Nix package search</strong>
+            <span>Find the attribute name for a CLI package.</span>
+          </a>
+          <a class="doc-link" href="https://formulae.brew.sh/" target="_blank" rel="noreferrer">
+            <strong>Homebrew formulae</strong>
+            <span>Search formula and cask tokens.</span>
+          </a>
+          <a class="doc-link" href="https://wezterm.org/config/files.html" target="_blank" rel="noreferrer">
+            <strong>WezTerm configuration</strong>
+            <span>Lua files, hot reload, and configuration structure.</span>
+          </a>
+          <a class="doc-link" href="https://micro-editor.github.io/" target="_blank" rel="noreferrer">
+            <strong>Micro editor</strong>
+            <span>Official project overview, installation, and built-in help.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/micro-editor/micro/blob/master/runtime/help/defaultkeys.md" target="_blank" rel="noreferrer">
+            <strong>Micro default keys</strong>
+            <span>Direct reference for the editor's current default keyboard shortcuts.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md" target="_blank" rel="noreferrer">
+            <strong>ripgrep guide</strong>
+            <span>Recursive search, filtering, patterns, and file types.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/junegunn/fzf" target="_blank" rel="noreferrer">
+            <strong>fzf documentation</strong>
+            <span>Fuzzy selection, shell integrations, and examples.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/jesseduffield/lazygit" target="_blank" rel="noreferrer">
+            <strong>Lazygit</strong>
+            <span>Terminal Git interface, keybindings, and configuration.</span>
+          </a>
+          <a class="doc-link" href="https://herdr.dev/docs/quick-start/" target="_blank" rel="noreferrer">
+            <strong>Herdr quick start</strong>
+            <span>Sessions, detach and reattach, panes, and workspaces.</span>
+          </a>
+          <a class="doc-link" href="https://herdr.dev/docs/keyboard/" target="_blank" rel="noreferrer">
+            <strong>Herdr keyboard</strong>
+            <span>The prefix model and active key reference.</span>
+          </a>
+          <a class="doc-link" href="https://herdr.dev/docs/configuration/" target="_blank" rel="noreferrer">
+            <strong>Herdr configuration</strong>
+            <span>Keybindings, themes, notifications, and behavior.</span>
+          </a>
+          <a class="doc-link" href="https://starship.rs/config/" target="_blank" rel="noreferrer">
+            <strong>Starship configuration</strong>
+            <span>Prompt modules, format, symbols, and colors.</span>
+          </a>
+          <a class="doc-link" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks" target="_blank" rel="noreferrer">
+            <strong>GitHub forks</strong>
+            <span>Understand and maintain origin and upstream.</span>
+          </a>
+          <a class="doc-link" href="https://developers.openai.com/codex/cli/" target="_blank" rel="noreferrer">
+            <strong>Codex CLI</strong>
+            <span>Current CLI usage, configuration, and commands.</span>
+          </a>
+          <a class="doc-link" href="https://hermes-agent.nousresearch.com/docs/" target="_blank" rel="noreferrer">
+            <strong>Hermes Agent</strong>
+            <span>Setup, providers, tools, memory, gateways, and configuration.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/firstmate" target="_blank" rel="noreferrer">
+            <strong>First Mate</strong>
+            <span>Agent-distro setup, project registration, crew operation, and delivery modes.</span>
+          </a>
+        </div>
+      </section>
+
+      <div class="no-results" id="noResults">
+        <h2>No matching section</h2>
+        <p>Try a broader term such as <code>Nix</code>, <code>Git</code>, <code>Herdr</code>, or <code>rebuild</code>.</p>
+      </div>
+
+      <footer class="page-footer">
+        Built and maintained as the published <code>MattH-ca/m.dotfiles</code> configuration, documenting the Macbook setup.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const search = document.getElementById("guideSearch");
+    const searchMeta = document.getElementById("searchMeta");
+    const sections = Array.from(document.querySelectorAll(".guide-section"));
+    const navLinks = Array.from(document.querySelectorAll(".nav-list a"));
+    const noResults = document.getElementById("noResults");
+    const sidebar = document.getElementById("sidebar");
+    const menuButton = document.getElementById("menuButton");
+
+    function filterGuide() {
+      const query = search.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      sections.forEach((section) => {
+        const searchable = `${section.dataset.title || ""} ${section.textContent}`.toLowerCase();
+        const visible = !query || searchable.includes(query);
+        section.hidden = !visible;
+        visibleCount += visible ? 1 : 0;
+      });
+
+      navLinks.forEach((link) => {
+        const target = document.querySelector(link.getAttribute("href"));
+        link.closest("li").hidden = Boolean(target && target.hidden);
+      });
+
+      noResults.classList.toggle("visible", visibleCount === 0);
+      searchMeta.textContent = query
+        ? `${visibleCount} section${visibleCount === 1 ? "" : "s"} found`
+        : "Press / to search";
+    }
+
+    search.addEventListener("input", filterGuide);
+
+    document.addEventListener("keydown", (event) => {
+      const tag = document.activeElement.tagName;
+      const isTyping = tag === "INPUT" || tag === "TEXTAREA";
+
+      if (event.key === "/" && !isTyping) {
+        event.preventDefault();
+        search.focus();
+      }
+
+      if (event.key === "Escape" && document.activeElement === search) {
+        search.value = "";
+        filterGuide();
+        search.blur();
+      }
+    });
+
+    menuButton.addEventListener("click", () => {
+      const open = sidebar.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.setAttribute("aria-label", open ? "Close guide navigation" : "Open guide navigation");
+    });
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        menuButton.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+      if (!visible.length) return;
+
+      const id = visible[0].target.id;
+      navLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+      });
+    }, { rootMargin: "-15% 0px -72% 0px", threshold: 0 });
+
+    sections.forEach((section) => observer.observe(section));
+
+    document.querySelectorAll(".tab-set").forEach((tabSet) => {
+      const tabs = Array.from(tabSet.querySelectorAll('[role="tab"]'));
+      const panels = Array.from(tabSet.querySelectorAll('[role="tabpanel"]'));
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
+          panels.forEach((panel) => {
+            panel.hidden = panel.id !== tab.getAttribute("aria-controls");
+          });
+        });
+      });
+    });
+
+    document.querySelectorAll(".code-shell").forEach((shell) => {
+      const head = shell.querySelector(".code-head");
+      const code = shell.querySelector("pre code");
+      if (!head || !code) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-button";
+      button.type = "button";
+      button.textContent = "COPY";
+      button.setAttribute("aria-label", "Copy command block");
+      head.appendChild(button);
+
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(code.innerText);
+          button.textContent = "COPIED";
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = "SELECTED";
+        }
+
+        window.setTimeout(() => {
+          button.textContent = "COPY";
+        }, 1400);
+      });
+    });
+  </script>
+</body>
+</html>
