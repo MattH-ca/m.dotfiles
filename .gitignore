@@ -19,3 +19,10 @@ result-*
 
 # no-mistakes local validation state - never commit in this public repo
 .no-mistakes/
+
+# Machine inventory and task state stay out of the public repo. notes/ records
+# what is installed on this specific Mac, and backlog.md is the tasks-axi store,
+# which describes how the vault-blessed launchers are scoped. Both belong in
+# ~/dotfiles-private if they are to be versioned at all.
+notes/
+backlog.md

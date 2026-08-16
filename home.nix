@@ -11,12 +11,15 @@ in
   home.packages = with pkgs; [
     # cli i use constantly
     bat       # cat with syntax highlighting
+    doggo     # dns lookups - dig, but readable
     fd        # fast find
+    ffmpeg    # audio/video transcode, trim, extract
     fzf       # fuzzy finder
     git       # primary git (moved off homebrew)
     hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     htop      # process viewer
     jq        # json on the command line
+    just      # task runner; see the justfile at the repo root
     lazygit
     micro
     # node and pi-coding-agent both come from homebrew (see configuration.nix).
@@ -86,6 +89,11 @@ in
       cmd_duration.format = "[$duration]($style) ";
     };
   };
+
+  # `z <fragment>` jumps to a frecency-ranked directory, `zi` opens an fzf
+  # picker over the same history. Plain `cd` is deliberately left alone - see
+  # the --cmd option if that ever changes.
+  programs.zoxide.enable = true;
 
   # Edit-in-place: the real file stays in my repo, ~/.config just points at it.
   home.file.".config/wezterm".source =
