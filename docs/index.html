@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Matth's reference guide for the reproducible macOS agentic engineering setup.">
+  <meta name="description" content="Reference guide for the reproducible macOS agentic engineering setup in MattH-ca/m.dotfiles.">
   <link rel="icon" href="data:,">
-  <title>Agentic Macbook Field Guide</title>
+  <title>Agentic Mac Field Guide</title>
   <style>
     :root {
       color-scheme: dark;
@@ -353,7 +353,10 @@
     .terminal-figure img {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 5;
+      /* The source screenshot is a full terminal window whose content sits in
+         the top rows, so anchor to the top and keep the frame short rather
+         than showing a tall band of empty background. */
+      aspect-ratio: 16 / 3;
       object-fit: cover;
       object-position: top left;
     }
@@ -975,7 +978,7 @@
       }
 
       .terminal-figure img {
-        aspect-ratio: 16 / 7;
+        aspect-ratio: 16 / 4;
       }
 
       .terminal-caption {
@@ -1054,7 +1057,7 @@
   <a class="skip-link" href="#main">Skip to guide</a>
 
   <header class="mobile-bar">
-    <span class="mobile-title">MACBOOK / FIELD GUIDE</span>
+    <span class="mobile-title">AGENTIC MAC / FIELD GUIDE</span>
     <button class="menu-button" id="menuButton" type="button" aria-label="Open guide navigation" aria-expanded="false" title="Guide navigation"><span aria-hidden="true">☰</span></button>
   </header>
 
@@ -1063,7 +1066,7 @@
       <div class="brand">
         <div class="brand-mark">&gt;_</div>
         <div>
-          <span class="brand-title">Agentic Macbook</span>
+          <span class="brand-title">Agentic Mac</span>
           <span class="brand-subtitle">Field guide</span>
         </div>
       </div>
@@ -1102,8 +1105,8 @@
       </ol>
 
       <div class="sidebar-footer">
-        Snapshot: July 31, 2026<br>
-        Target: Macbook / Apple Silicon
+        Snapshot: August 16, 2026<br>
+        Target: Apple Silicon Mac
       </div>
     </div>
   </aside>
@@ -1111,17 +1114,18 @@
   <div class="shell">
     <main id="main">
       <header class="masthead">
-        <p class="eyebrow">matth@macbook : ~/dotfiles</p>
+        <p class="eyebrow">matth@mac : ~/dotfiles</p>
         <h1>Your agentic engineering system, explained.</h1>
-        <p class="lede">A practical reference for understanding, changing, maintaining, and recovering the Mac setup we built together.</p>
+        <p class="lede">A practical reference for understanding, changing, maintaining, and recovering the Agentic Mac.</p>
 
         <div class="status-row" aria-label="System status">
           <span class="status">Determinate Nix</span>
           <span class="status">nix-darwin 26.05</span>
           <span class="status">Home Manager 26.05</span>
           <span class="status">WezTerm + Herdr</span>
-          <span class="status">Claude + Codex + Hermes</span>
-          <span class="status">First Mate</span>
+          <span class="status">Claude + Codex + Pi + OpenCode</span>
+          <span class="status">Hermes + First Mate</span>
+          <span class="status">Automic Vault</span>
         </div>
 
         <figure class="terminal-figure">
@@ -1168,6 +1172,11 @@
             <span class="architecture-path">WORK LAYER</span>
             <h3>WezTerm + Herdr</h3>
             <p>WezTerm renders the terminal. Herdr keeps workspaces, panes, and agent sessions alive.</p>
+          </article>
+          <article class="architecture-node">
+            <span class="architecture-path">SECRETS LAYER</span>
+            <h3>Automic Vault</h3>
+            <p>Keeps tokens in the Keychain and gates every authenticated use behind an approval prompt. Section 14 covers it.</p>
           </article>
         </div>
 
@@ -1217,26 +1226,65 @@
               </tr>
               <tr>
                 <td><code>home/.claude/settings.json</code></td>
-                <td>Claude theme, TUI, status line, permission prompt choice</td>
+                <td>Claude theme, TUI, status line, hooks, permission mode</td>
                 <td>Restart Claude when needed</td>
+              </tr>
+              <tr>
+                <td><code>home/.claude/statusline.sh</code></td>
+                <td>The status line Claude renders under the prompt</td>
+                <td>Direct link; takes effect on the next render</td>
+              </tr>
+              <tr>
+                <td><code>home/.pi/agent/</code></td>
+                <td>Pi theme, local extensions, model overrides, settings</td>
+                <td>Direct links; <code>/reload</code> inside Pi</td>
+              </tr>
+              <tr>
+                <td><code>home/skills/</code></td>
+                <td>Hand-authored agent skills, shared by all three harnesses</td>
+                <td>Direct link; new agent sessions read it</td>
+              </tr>
+              <tr>
+                <td><code>bin/</code></td>
+                <td>Blessed Automic Vault launchers (<code>cc</code>, <code>oc</code>, <code>fm-claude</code>, <code>no-mistakes-daemon</code>)</td>
+                <td>Run directly; editing one voids its blessing</td>
+              </tr>
+              <tr>
+                <td><code>herdr-plugins/</code></td>
+                <td>Herdr startup plugins, installed into Herdr itself</td>
+                <td>Reinstall or restart Herdr</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <h3>Why the symlinks matter</h3>
-        <p>Home Manager creates managed paths such as <code>~/.config/wezterm</code>, but they ultimately point into <code>~/dotfiles</code>. An application reads its normal home-directory path while Git records the real file in the repository.</p>
+        <p>Home Manager creates managed paths such as <code>~/.config/wezterm</code>, but they ultimately point into <code>~/dotfiles</code> through the stable <code>~/.dotfiles</code> link. An application reads its normal home-directory path while Git records the real file in the repository.</p>
 
         <div class="file-tree">~/dotfiles
 |-- flake.nix                 # inputs and module graph
 |-- flake.lock                # exact pinned revisions
-|-- configuration.nix         # macOS and Homebrew
-|-- home.nix                  # user environment
+|-- configuration.nix         # macOS defaults, Homebrew, taps
+|-- home.nix                  # user environment and symlinks
 |-- bootstrap.sh              # first-machine setup
 |-- rebuild.sh                # apply future changes
+|-- AGENTS.md                 # repo-local notes (CLAUDE.md links here)
+|-- bin/                      # blessed vault launchers
+|   |-- cc                    # claude, with GH_TOKEN injected
+|   |-- oc                    # opencode, with ANTHROPIC_API_KEY injected
+|   |-- fm-claude             # First Mate crewmate launcher
+|   `-- no-mistakes-daemon    # foreground pipeline daemon
+|-- herdr-plugins/
+|   `-- nms-autostart/        # restores the daemon pane after a restore
+|-- tests/                    # shell tests for the Pi Calm extension
+|-- docs/                     # this field guide, published by GitHub Pages
 `-- home/
-    |-- AGENTS.md
-    |-- .claude/settings.json
+    |-- AGENTS.md             # shared agent policy for all three harnesses
+    |-- skills/bro/           # hand-authored agent skill
+    |-- .claude/
+    |   |-- settings.json
+    |   `-- statusline.sh
+    |-- .pi/agent/            # theme, extensions, models, settings
     `-- .config/
         |-- wezterm/wezterm.lua
         `-- herdr/config.toml</div>
@@ -1302,6 +1350,15 @@ git status --short</code></pre>
           <strong>Expected clean result:</strong> the last <code>git status --short</code> prints nothing. Silence is success for that command.
         </div>
 
+        <div class="callout info">
+          <strong>Check before you switch:</strong> when an edit is large or unfamiliar, prove it builds without touching the machine first.
+          <div class="code-shell">
+            <div class="code-head"><span>Dry run</span></div>
+            <pre><code>nix flake check --no-build
+nix build .#darwinConfigurations.mac.system --dry-run</code></pre>
+          </div>
+        </div>
+
         <div class="callout warning">
           <strong>One checkpoint at a time:</strong> explanations are not terminal commands. Only paste fenced command blocks into the shell.
         </div>
@@ -1330,8 +1387,9 @@ git status --short</code></pre>
             <ul class="clean">
               <li>WezTerm appearance changes hot-reload</li>
               <li>Herdr reads its linked TOML configuration</li>
-              <li>Claude settings are already linked</li>
-              <li>Shared agent instructions are already linked</li>
+              <li>Claude settings and the status line script are already linked</li>
+              <li>Shared agent instructions and skills are already linked</li>
+              <li>Pi themes, extensions, and settings are already linked (<code>/reload</code>)</li>
               <li>Startup-only behavior needs the app restarted</li>
             </ul>
           </article>
@@ -1342,7 +1400,7 @@ git status --short</code></pre>
         </div>
       </section>
 
-      <section class="guide-section" id="software" data-title="Install software Nix package Homebrew formula cask application remove upgrade npm global tmux treehouse axi no-mistakes">
+      <section class="guide-section" id="software" data-title="Install software Nix package Homebrew formula cask tap application remove upgrade npm global node pi shellcheck typescript age orbstack docker compose tmux treehouse axi no-mistakes nms daemon PATH">
         <p class="eyebrow">04 / Install software</p>
         <h2>Put software in the right list</h2>
         <p class="section-intro">Use Nix for ordinary command-line tools when they exist in nixpkgs. Use Homebrew casks for macOS applications. Keep Homebrew formulae for tools that are Homebrew-specific or integrate better there.</p>
@@ -1369,14 +1427,14 @@ git status --short</code></pre>
   jq
   lazygit
   micro
-  nodejs
   opencode
-  pi-coding-agent
   ripgrep
   rsync
+  shellcheck
   tmux
   tree
   treehouse.packages.${pkgs.stdenv.hostPlatform.system}.default
+  typescript
   uv
   wget
   cowsay  <span class="comment"># example new package</span>
@@ -1388,26 +1446,32 @@ git status --short</code></pre>
 
           <div class="tab-panel" id="panel-brew" role="tabpanel" aria-labelledby="tab-brew" hidden>
             <h3>Example: add a Homebrew command-line formula</h3>
-            <p>Edit the <code>brews</code> list in <code>configuration.nix</code>.</p>
+            <p>Edit the <code>brews</code> list in <code>configuration.nix</code>. A formula from a third-party tap needs its tap declared too, and the tap must be marked trusted.</p>
             <div class="code-shell">
               <div class="code-head"><span>configuration.nix</span></div>
-              <pre><code>brews = [
+              <pre><code>taps = [
+  { name = "automic-vault/isotopes"; trusted = true; }
+  { name = "my-monkeys/tap";         trusted = true; }
+];
+
+brews = [
   "herdr"
   "example-formula"
 ];</code></pre>
             </div>
-            <p>Use this when the package is not suitable in Nix or when its Homebrew integration matters.</p>
+            <p>Use this when the package is not in nixpkgs, when its Homebrew integration matters, or when the nixpkgs release branch is frozen on an older version than you want.</p>
           </div>
 
           <div class="tab-panel" id="panel-cask" role="tabpanel" aria-labelledby="tab-cask" hidden>
             <h3>Example: add a macOS application</h3>
-            <p>Edit the <code>casks</code> list in <code>configuration.nix</code>.</p>
+            <p>Edit the <code>casks</code> list in <code>configuration.nix</code>. Casks from a tap use their fully qualified token.</p>
             <div class="code-shell">
               <div class="code-head"><span>configuration.nix</span></div>
               <pre><code>casks = [
   "wezterm"
   "claude-code"
   "codex"
+  "my-monkeys/tap/opensuperwhisper"
   "example-app"
 ];</code></pre>
             </div>
@@ -1444,11 +1508,15 @@ command -v NAME || echo "NAME is missing"</code></pre>
             <tbody>
               <tr>
                 <td>Nix user packages</td>
-                <td><code>bat</code>, <code>fd</code>, <code>fzf</code>, <code>git</code>, Hermes Agent, <code>htop</code>, <code>jq</code>, <code>lazygit</code>, <code>micro</code>, <code>nodejs</code>, OpenCode, Pi coding agent, <code>ripgrep</code>, <code>rsync</code>, <code>tmux</code>, <code>tree</code>, Treehouse (flake input), <code>uv</code>, <code>wget</code>, Hack Nerd Font</td>
+                <td><code>bat</code>, <code>fd</code>, <code>fzf</code>, <code>git</code>, Hermes Agent, <code>htop</code>, <code>jq</code>, <code>lazygit</code>, <code>micro</code>, OpenCode, <code>ripgrep</code>, <code>rsync</code>, <code>shellcheck</code>, <code>tmux</code>, <code>tree</code>, Treehouse (flake input), <code>typescript</code>, <code>uv</code>, <code>wget</code>, Hack Nerd Font</td>
+              </tr>
+              <tr>
+                <td>Homebrew taps</td>
+                <td><code>automic-vault/isotopes</code>, <code>my-monkeys/tap</code> (both declared <code>trusted</code>)</td>
               </tr>
               <tr>
                 <td>Homebrew formulae</td>
-                <td><code>gh-cli</code> (Automic Vault), <code>herdr</code>, <code>docker</code> (CLI only), <code>ollama</code>, <code>llama.cpp</code></td>
+                <td><code>age</code>, <code>gh-cli</code> (Automic Vault's hardened GitHub CLI), <code>herdr</code>, <code>node</code>, <code>pi-coding-agent</code>, <code>docker</code> (CLI only), <code>ollama</code>, <code>llama.cpp</code></td>
               </tr>
               <tr>
                 <td>Homebrew casks</td>
@@ -1458,17 +1526,23 @@ command -v NAME || echo "NAME is missing"</code></pre>
           </table>
         </div>
 
+        <div class="callout info">
+          <strong>Why Node and Pi are on Homebrew, not Nix:</strong> the <code>nixpkgs-26.05-darwin</code> release branch freezes Pi at an old version while Pi ships releases continuously, so <code>pi-coding-agent</code> comes from homebrew-core instead. Its bottle carries native modules that are ABI-bound to the Node major it was built against, and <code>/opt/homebrew/bin</code> precedes the Nix profiles on <code>PATH</code>, so a second Nix <code>nodejs</code> would only shadow the one Pi needs. Homebrew's <code>node</code> is therefore the machine's single Node, and it serves the <code>~/.npm-global</code> CLIs too.
+        </div>
+
         <h3>The container layer</h3>
-        <p>OrbStack is the container and Linux VM runtime, not Docker Desktop. The <code>docker</code> formula is only the CLI client; the daemon it talks to comes from OrbStack, which registers an <code>orbstack</code> Docker context and makes it current on first launch. OrbStack also drops <code>docker-compose</code> and <code>docker-buildx</code> into <code>~/.docker/cli-plugins</code>, so <code>docker compose</code> keeps working. Docker Desktop was never declared here; if it is still on the machine it is an undeclared leftover that Homebrew's cleanup will not touch, because it was installed from a <code>.dmg</code> rather than a cask.</p>
+        <p>OrbStack is the container and Linux VM runtime, not Docker Desktop. The <code>docker</code> formula is only the CLI client; the daemon it talks to comes from OrbStack, which registers an <code>orbstack</code> Docker context and makes it current on first launch. The Homebrew client ships no subcommand plugins, so <code>home.nix</code> links <code>~/.docker/cli-plugins/docker-compose</code> and <code>docker-buildx</code> straight at the binaries inside <code>OrbStack.app</code>. That keeps <code>docker compose</code> working without OrbStack's GUI onboarding step, which is what would otherwise create <code>~/.orbstack/bin</code> and never runs on a headless setup.</p>
 
         <h3>The npm layer (not managed by Nix)</h3>
-        <p><code>home.nix</code> sets <code>NPM_CONFIG_PREFIX</code> to <code>~/.npm-global</code> and puts its <code>bin</code> on the PATH, because the Nix-store Node.js is read-only. First Mate's worker CLIs are installed there imperatively: <code>gh-axi</code>, <code>chrome-devtools-axi</code>, <code>lavish-axi</code>, <code>tasks-axi</code>, <code>quota-axi</code>, and <code>gnhf</code>. The <code>no-mistakes</code> validation pipeline lives at <code>~/.no-mistakes/bin</code> (also on the PATH from <code>home.nix</code>); point <code>NO_MISTAKES_LINK_DIR</code> at that same directory when installing so it skips the one step that wants sudo. On a fresh Mac these need one reinstall pass; the README's "Agent worker tooling" section has the exact commands.</p>
-        <p>On this machine the no-mistakes daemon is not run from its launchd agent. Start it from a herdr pane with <code>~/dotfiles/bin/no-mistakes-daemon</code> (or the <code>nms</code> alias) and leave it in its own pane; herdr keeps it across disconnects and restarts.</p>
-        <p>Never run <code>no-mistakes daemon start</code> or <code>daemon restart</code>. Both silently break the pipeline's GitHub access, with no error to tell you. The full rationale lives in the private companion notes.</p>
+        <p><code>home.nix</code> sets <code>NPM_CONFIG_PREFIX</code> to <code>~/.npm-global</code> and puts its <code>bin</code> on the PATH, so npm globals land in a writable prefix rather than alongside the runtime. First Mate's worker CLIs are installed there imperatively: <code>gh-axi</code>, <code>chrome-devtools-axi</code>, <code>lavish-axi</code>, <code>tasks-axi</code>, <code>quota-axi</code>, and <code>gnhf</code>. The <code>no-mistakes</code> validation pipeline lives at <code>~/.no-mistakes/bin</code> (also on the PATH from <code>home.nix</code>); point <code>NO_MISTAKES_LINK_DIR</code> at that same directory when installing so it skips the one step that wants sudo. On a fresh Mac these need one reinstall pass; the README's "Agent worker tooling" section has the exact commands.</p>
+        <p>The no-mistakes daemon runs in the foreground from a herdr pane, not from its launchd agent. Start it with the <code>nms</code> alias (<code>~/dotfiles/bin/no-mistakes-daemon</code>) and leave it in its own pane; herdr keeps it across disconnects and restarts, and the <code>nms-autostart</code> herdr plugin recreates that pane after every session restore.</p>
+        <div class="callout warning">
+          <strong>Never run <code>no-mistakes daemon start</code> or <code>daemon restart</code>.</strong> Both silently break the pipeline's GitHub access, with no error to tell you. The alias is <code>nms</code>, not <code>nm</code>: <code>nm</code> is binutils' symbol lister.
+        </div>
         <p>When a rebuild changes the PATH, existing terminal sessions keep the old one: home-manager guards its session variables with <code>__HM_SESS_VARS_SOURCED</code>, and every nested shell inherits the guard, so agents launched from a pre-rebuild shell see <code>command not found</code> for tools that are actually installed. Open a fresh WezTerm tab (or reboot) and restart long-lived hosts like the herdr server from it.</p>
       </section>
 
-      <section class="guide-section" id="terminal" data-title="WezTerm Micro terminal editor shortcuts maximize opacity blur font Lua">
+      <section class="guide-section" id="terminal" data-title="WezTerm Micro terminal editor shortcuts maximize opacity blur font Lua clipboard mouse selection primary dim unfocused tab bar">
         <p class="eyebrow">05 / WezTerm + Micro</p>
         <h2>Your working surface</h2>
         <p class="section-intro">WezTerm owns the terminal window. Zsh owns the shell inside it. Starship draws the prompt. Micro is the default text editor.</p>
@@ -1533,12 +1607,31 @@ command -v NAME || echo "NAME is missing"</code></pre>
                 <td>Frameless appearance while retaining resize support</td>
               </tr>
               <tr>
+                <td><code>hide_tab_bar_if_only_one_tab</code></td>
+                <td><code>true</code></td>
+                <td>No tab strip until a second tab exists</td>
+              </tr>
+              <tr>
                 <td><code>gui-startup</code></td>
                 <td><code>maximize()</code></td>
                 <td>Uses the available desktop without macOS full-screen mode</td>
               </tr>
+              <tr>
+                <td><code>window-focus-changed</code></td>
+                <td>dim to 62% opacity</td>
+                <td>Unfocused windows fade their text and background so the focused one is obvious</td>
+              </tr>
+              <tr>
+                <td><code>mouse_bindings</code></td>
+                <td><code>PrimarySelection</code> only</td>
+                <td>Mouse selection never writes the system clipboard, so Universal Clipboard content is not clobbered</td>
+              </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="callout info">
+          <strong>Copying is explicit here:</strong> highlighting text with the mouse does <em>not</em> put it on the clipboard. Press <kbd>Cmd</kbd>+<kbd>C</kbd> to copy a selection - that binding is untouched.
         </div>
 
         <div class="key-grid" aria-label="WezTerm shortcuts">
@@ -1605,7 +1698,7 @@ rg --files                         <span class="comment"># list searchable proje
         <p>By default, ripgrep skips hidden files, binary files, and ignored paths. Include hidden files while still excluding Git internals with:</p>
         <div class="code-shell">
           <div class="code-head"><span>Search hidden configuration</span></div>
-          <pre><code>rg --hidden -g '!.git' "creative_production_mcp" "$HOME/.codex"</code></pre>
+          <pre><code>rg --hidden -g '!.git' "statusLine" "$HOME/.claude"</code></pre>
         </div>
 
         <h3>Use fzf on its own</h3>
@@ -1644,7 +1737,7 @@ file="$(rg -l "homebrew" | fzf)"
         </div>
       </section>
 
-      <section class="guide-section" id="herdr" data-title="Herdr help multiplexer workspace tab pane detach reattach split close stop server">
+      <section class="guide-section" id="herdr" data-title="Herdr help multiplexer workspace tab pane detach reattach split close stop server plugin nms-autostart agent panel copy mode">
         <p class="eyebrow">07 / Herdr</p>
         <h2>Persistent agent workspaces</h2>
         <p class="section-intro">Herdr sits inside WezTerm and keeps terminal work alive independently of the window. Closing WezTerm does not need to terminate your running agents.</p>
@@ -1694,6 +1787,11 @@ herdr server stop     <span class="comment"># actually stop the session and its 
           <strong>You can use the mouse:</strong> Herdr is mouse-native. Click tabs and panes, drag split borders, and use context menus while the keyboard model becomes familiar.
         </div>
 
+        <p>Two non-key settings also live in <code>home/.config/herdr/config.toml</code>: <code>onboarding = false</code> skips the first-run tour, and <code>agent_panel_sort = "spaces"</code> groups the agents panel by space rather than by priority. Copy mode's own internal keys (<kbd>v</kbd> / <kbd>Space</kbd> to select, <kbd>y</kbd> / <kbd>Enter</kbd> to copy, <kbd>q</kbd> / <kbd>Esc</kbd> to cancel) are fixed by Herdr and not configurable; only the key that <em>enters</em> copy mode is.</p>
+
+        <h3>The startup plugin</h3>
+        <p><code>herdr-plugins/nms-autostart</code> is a Herdr startup plugin kept in this repo. Herdr runs it once after it restores a session and its API socket is ready. Session restore brings panes back as empty shells, so the plugin checks whether the no-mistakes daemon is running and, if not, recreates an <code>NMS</code> tab in the <code>dotfiles</code> workspace and starts the blessed launcher in it. That is why the pipeline daemon survives a full restart without you doing anything.</p>
+
         <h3>A useful project layout</h3>
         <div class="table-wrap">
           <table>
@@ -1725,21 +1823,31 @@ herdr server stop     <span class="comment"># actually stop the session and its 
         </div>
       </section>
 
-      <section class="guide-section" id="agents" data-title="Claude Code Codex OpenCode Pi Hermes First Mate aliases permissions AGENTS memory status line security sandbox crew">
+      <section class="guide-section" id="agents" data-title="Claude Code Codex OpenCode Pi Calm Hermes First Mate aliases cc co oc nms permissions AGENTS skills memory status line hooks security sandbox crew launcher blessed">
         <p class="eyebrow">08 / Agents</p>
         <h2>Shared rules, different permission models</h2>
-        <p class="section-intro">Claude, Codex, and OpenCode share global instructions. Hermes is a separate personal agent, while First Mate is a writable agent distro that coordinates crews across registered projects.</p>
+        <p class="section-intro">Claude, Codex, and OpenCode share one global instruction file and one skills directory. Pi and Hermes are separate agents with their own state, and First Mate is a writable agent distro that coordinates crews across registered projects.</p>
 
         <div class="grid-2">
           <article class="panel">
             <span class="panel-accent">Claude Code</span>
             <h3><code>cc</code></h3>
-            <p>Runs <code>claude --dangerously-skip-permissions</code>. Claude can act without approval prompts and is not protected by the Codex workspace sandbox.</p>
+            <p>Runs <code>bin/cc</code>, a blessed Automic Vault launcher that hands Claude a scoped <code>GH_TOKEN</code> and then execs <code>claude --dangerously-skip-permissions</code>. Claude acts without approval prompts and is not protected by the Codex workspace sandbox.</p>
           </article>
           <article class="panel">
             <span class="panel-accent">Codex</span>
             <h3><code>co</code></h3>
-            <p>Runs with <code>workspace-write</code> and no approval prompts. It can modify the active workspace, while access outside that sandbox is denied.</p>
+            <p>Runs <code>codex --sandbox workspace-write --ask-for-approval never</code>. It can modify the active workspace, while access outside that sandbox is denied.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">OpenCode</span>
+            <h3><code>oc</code></h3>
+            <p>Runs <code>bin/oc</code>, a blessed launcher that injects <code>ANTHROPIC_API_KEY</code> so OpenCode authenticates without <code>opencode auth login</code> writing an <code>auth.json</code> to disk.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">Pi</span>
+            <h3><code>pi</code></h3>
+            <p>Installed from the homebrew-core <code>pi-coding-agent</code> formula. This repo owns only its theme, local extensions, model overrides, and generic settings - see "Pi's selective setup" below.</p>
           </article>
         </div>
 
@@ -1757,18 +1865,31 @@ herdr server stop     <span class="comment"># actually stop the session and its 
         </div>
 
         <div class="callout warning">
-          <strong>Security boundary:</strong> the <code>cc</code> and <code>co</code> aliases are intentionally autonomous. Start them only in a repository you trust. The planned sandbox network isolation is a separate security project and is not implemented by these dotfiles.
+          <strong>Security boundary:</strong> the <code>cc</code>, <code>co</code>, and <code>oc</code> aliases are intentionally autonomous. Start them only in a repository you trust. The planned sandbox network isolation is a separate security project and is not implemented by these dotfiles.
         </div>
 
         <h3>One instruction source</h3>
         <div class="code-shell">
           <div class="code-head"><span>Managed links</span></div>
-          <pre><code>~/.claude/CLAUDE.md            -> ~/dotfiles/home/AGENTS.md
+          <pre><code><span class="comment"># shared policy: one file, three harnesses</span>
+~/.claude/CLAUDE.md            -> ~/dotfiles/home/AGENTS.md
 ~/.codex/AGENTS.md             -> ~/dotfiles/home/AGENTS.md
-~/.config/opencode/AGENTS.md   -> ~/dotfiles/home/AGENTS.md</code></pre>
+~/.config/opencode/AGENTS.md   -> ~/dotfiles/home/AGENTS.md
+
+<span class="comment"># hand-authored skills: one directory, three roots</span>
+~/.agents/skills/bro           -> ~/dotfiles/home/skills/bro
+~/.claude/skills/bro           -> ~/dotfiles/home/skills/bro
+~/.codex/skills/bro            -> ~/dotfiles/home/skills/bro
+
+<span class="comment"># Claude's own configuration</span>
+~/.claude/settings.json        -> ~/dotfiles/home/.claude/settings.json</code></pre>
         </div>
 
-        <p>Edit <code>home/AGENTS.md</code> when a preference should apply to Claude, Codex, and OpenCode. Use project-local instruction files when a rule only belongs to one repository. Hermes and First Mate maintain their own operational state and instructions.</p>
+        <p>Edit <code>home/AGENTS.md</code> when a preference should apply to Claude, Codex, and OpenCode. Use project-local instruction files when a rule only belongs to one repository. Pi, Hermes, and First Mate maintain their own operational state and instructions.</p>
+
+        <div class="callout info">
+          <strong>Only authored skills are linked.</strong> <code>~/.agents/skills</code> is the shared skills root that the <code>skills</code> CLI installs into from GitHub, tracked in its own <code>.skill-lock.json</code>. Linking just the skills written here leaves that CLI free to manage the rest. OpenCode needs no link of its own because it also scans <code>~/.agents/skills</code> and <code>~/.claude/skills</code>; confirm with <code>opencode debug skill</code>.
+        </div>
 
         <h3>First Mate project workflow</h3>
         <div class="code-shell">
@@ -1782,17 +1903,27 @@ Add https://github.com/OWNER/REPO as a no-mistakes project.
 Do not start any work yet.</code></pre>
         </div>
         <p>First Mate keeps its managed clones under <code>~/firstmate/projects</code> and gives workers isolated worktrees. Use <code>no-mistakes</code> for its full validation and PR pipeline, <code>direct-PR</code> for a faster PR path, or <code>local-only</code> when no remote is required.</p>
-        <p>Its worker tooling is fully installed on this machine: <code>tmux</code> hosts each worker session, Treehouse provides the isolated worktree pool, <code>tasks-axi</code> is the durable task queue, <code>quota-axi</code> checks usage headroom before dispatch, <code>gh-axi</code> / <code>chrome-devtools-axi</code> / <code>lavish-axi</code> cover GitHub, browser, and report work, and <code>no-mistakes</code> gates deliveries. The <code>lavish</code>, <code>gnhf</code>, and <code>no-mistakes</code> agent skills are installed globally.</p>
+        <p>Its worker tooling is fully installed on this machine: <code>tmux</code> hosts each worker session, Treehouse provides the isolated worktree pool, <code>tasks-axi</code> is the durable task queue, <code>quota-axi</code> checks usage headroom before dispatch, <code>gh-axi</code> / <code>chrome-devtools-axi</code> / <code>lavish-axi</code> cover GitHub, browser, and report work, and <code>no-mistakes</code> gates deliveries. The <code>lavish</code> and <code>gnhf</code> agent skills are installed globally with the <code>skills</code> CLI; <code>no-mistakes</code> ships its own.</p>
+        <p>Crewmates launch through <code>bin/fm-claude</code>, a blessed launcher wired in via First Mate's untracked <code>config/claude-launcher</code>. It is a deliberate pure passthrough to <code>claude "$@"</code>: First Mate's spawn script owns the flags, the model and effort selection, and the encoded launch brief, so rewriting the arguments here would break its adapter.</p>
         <p>The <code>no-mistakes</code> daemon is a single shared instance serving every lane, so restarting it kills other lanes' in-flight pipeline runs. Leave it to First Mate; restart it by hand only when nothing is running.</p>
 
-        <h3>Claude status line</h3>
-        <p>The managed Claude settings use <code>jq</code> to read Claude's status payload and display the active model plus context-window usage. That is why <code>jq</code> is part of the Nix user package list.</p>
+        <h3>Pi's selective setup</h3>
+        <p>Home Manager deliberately does not own <code>~/.pi/agent</code> itself. It links exactly four things - the <code>themes</code> and <code>extensions</code> directories, plus <code>models.json</code> and <code>settings.json</code> as individual files - so Pi's authentication, sessions, trust decisions, caches, and downloaded package trees all stay local and untracked. Run <code>/reload</code> inside Pi after editing a linked file.</p>
+        <p>The local extensions directory is for repository-authored extensions only; third-party package code never belongs there. Two extensions live there today: a terminal-title extension that shows a spinner while Pi is working, and <strong>Pi Calm</strong>, a conversation-only presentation mode toggled with <code>/calm</code> and off by default. Calm hides collapsed thinking and the call/result shells for Pi's seven built-in tools, and replaces the working row with an animated widget; it never changes prompts, tool execution, model context, session data, or ordering, and <code>/share</code> and <code>/export</code> still use the complete stock transcript. Its on/off choice is stored locally, not in this repo. <code>tests/pi-calm.test.sh</code> is the shell test suite that proves all of that.</p>
+
+        <h3>Claude status line and settings</h3>
+        <p><code>home/.claude/statusline.sh</code> reads the JSON payload Claude pipes to it and renders <em>model | directory | branch | context% | effort | output style</em>. The branch is not in that payload, so the script asks Git for it. This is why <code>jq</code> is part of the Nix user package list.</p>
+        <p><code>home/.claude/settings.json</code> also registers three <code>SessionStart</code> hooks - <code>gh-axi</code>, <code>chrome-devtools-axi</code>, and <code>lavish-axi</code> - which print ambient context into each new session, and sets the permission mode, TUI mode, and theme.</p>
+
+        <div class="callout info">
+          <strong>Two keys in that file are intentionally not version controlled.</strong> Claude Code rewrites <code>model</code> and <code>effortLevel</code> in place whenever you use <code>/config</code> or <code>/effort</code>, and the live file <em>is</em> the repo file. A Git clean filter declared in <code>.gitattributes</code> strips those two keys on the way into a commit, so day-to-day model switching never shows up as a diff. Git refuses to take filter definitions from the repo itself, so <code>bootstrap.sh</code> configures the filter per clone - do not re-add the keys to the tracked file.
+        </div>
 
         <h3>Authentication is deliberately not in Git</h3>
         <p>OAuth sessions, tokens, keychain entries, <code>auth.json</code>, histories, logs, and local plugin cache state should remain local. Configuration is reproducible; credentials must be restored interactively.</p>
       </section>
 
-      <section class="guide-section" id="git" data-title="Git GitHub Lazygit review diff stage unstage commit push maintenance fork upstream sync undo pager END">
+      <section class="guide-section" id="git" data-title="Git GitHub Lazygit review diff stage unstage commit push maintenance fork upstream sync undo pager END remote SSH pull request clean filter gitattributes">
         <p class="eyebrow">09 / Git + Lazygit</p>
         <h2>Maintain the source of truth</h2>
         <p class="section-intro">Git records each proven setup change. Lazygit is a visual terminal interface for reviewing and operating that same Git repository. GitHub protects the checkpoints from loss and lets the fork receive upstream improvements.</p>
@@ -1933,7 +2064,8 @@ git status --short</code></pre>
           <strong>Stage explicitly:</strong> the <code>add</code> alias runs <code>git add .</code>, which stages everything. Prefer <code>git add path</code> when you want a controlled checkpoint.
         </div>
 
-        <h3>Understand the remotes</h3>
+        <h3>Understand the remote</h3>
+        <p>This repository has exactly one remote, and it is an SSH remote on purpose. An HTTPS remote plus the <code>osxkeychain</code> credential helper would let any process on the machine retrieve the GitHub token through <code>git credential fill</code>; an SSH remote is not extractable that way.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -1946,32 +2078,26 @@ git status --short</code></pre>
             <tbody>
               <tr>
                 <td><code>origin</code></td>
-                <td><code>MattH-ca/m.dotfiles</code></td>
-                <td>Your repo. Push your commits here.</td>
+                <td><code>git@github.com:MattH-ca/m.dotfiles.git</code></td>
+                <td>The only remote. Push commits here; GitHub Pages publishes <code>docs/</code> from it.</td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <h3>Inspect upstream before merging</h3>
+        <p>There is no <code>upstream</code>. If you forked this repo and want to track it, add one yourself with <code>git remote add upstream https://github.com/MattH-ca/m.dotfiles.git</code>, then compare before merging:</p>
         <div class="code-shell">
-          <div class="code-head"><span>Read-only upstream check</span></div>
-          <pre><code>cd "$HOME/dotfiles"
-git fetch upstream
+          <div class="code-head"><span>Read-only upstream check (forks only)</span></div>
+          <pre><code>git fetch upstream
 git log --oneline --left-right main...upstream/main</code></pre>
         </div>
-        <p>Lines beginning with <code>&lt;</code> are unique to your fork. Lines beginning with <code>&gt;</code> are new upstream. Review upstream changes before merging because your editor, Dock, packages, and safety choices intentionally differ.</p>
+        <p>Lines beginning with <code>&lt;</code> are unique to your fork. Lines beginning with <code>&gt;</code> are new upstream. Review before merging, because your editor, Dock, packages, and safety choices will intentionally differ. Use a normal merge and resolve conflicts deliberately; avoid <code>git reset --hard</code> and avoid force-pushing a customized <code>main</code>.</p>
 
-        <div class="code-shell">
-          <div class="code-head"><span>Merge after review</span></div>
-          <pre><code>git switch main
-git merge upstream/main
-./rebuild.sh
-git push origin main</code></pre>
+        <div class="callout info">
+          <strong>This repo does not take pull requests.</strong> A GitHub Action comments on and auto-closes any PR opened by someone other than the owner, and <code>CONTRIBUTING.md</code> says the same thing. Bug reports go through Issues. Fork it freely and make it yours.
         </div>
 
         <div class="callout warning">
-          <strong>Do not blindly sync the fork:</strong> use a normal merge and resolve conflicts deliberately. Avoid <code>git reset --hard</code> and avoid force-pushing customized <code>main</code>.
+          <strong>One diff will look strange.</strong> <code>home/.claude/settings.json</code> passes through a Git clean filter that strips <code>model</code> and <code>effortLevel</code>, so those two keys never appear in a commit even though they are in the file on disk. That is the filter working. Section 08 explains why.
         </div>
 
         <h3>Small recoveries</h3>
@@ -2009,7 +2135,7 @@ git push origin main</code></pre>
         </div>
       </section>
 
-      <section class="guide-section" id="updates" data-title="Update upgrade flake lock Nix Homebrew Claude Codex WezTerm Herdr maintenance">
+      <section class="guide-section" id="updates" data-title="Update upgrade flake lock Nix Homebrew brew-src nix-homebrew unknown install step Claude Codex WezTerm Herdr maintenance autoUpdate">
         <p class="eyebrow">10 / Updates</p>
         <h2>Update intentionally</h2>
         <p class="section-intro">Pinned inputs give you repeatability. Updating is a deliberate change that should be reviewed, rebuilt, tested, and committed.</p>
@@ -2029,6 +2155,7 @@ git push origin main</code></pre>
         <p>The release branches remain <code>26.05</code>, while <code>flake.lock</code> advances to newer exact revisions on those branches.</p>
 
         <h3>Homebrew-managed software</h3>
+        <p><code>configuration.nix</code> sets <code>homebrew.onActivation.autoUpdate = true</code>, so each rebuild refreshes Homebrew's formula and cask data on its own. Upgrading the installed packages is still a separate, deliberate step.</p>
         <div class="code-shell">
           <div class="code-head"><span>Inspect before upgrading</span></div>
           <pre><code>brew outdated
@@ -2038,12 +2165,23 @@ brew upgrade herdr
 brew upgrade --cask wezterm claude-code codex</code></pre>
         </div>
 
+        <h3>Homebrew itself is pinned by Nix</h3>
+        <div class="callout warning">
+          <strong>The trap:</strong> Homebrew's own code comes from the <code>brew-src</code> flake input through <code>nix-homebrew</code> and lives in a read-only Nix store path. <code>brew update</code> can therefore never upgrade Homebrew - it only refreshes formula and cask data from the API. So a current cask definition can land on a months-old Homebrew that cannot parse it, and the failure never says the version is the problem. It surfaces as <code>unknown install step: &lt;stanza&gt;</code>, a symlink source that "is not there", or artifacts installed in the wrong order.
+        </div>
+        <div class="code-shell">
+          <div class="code-head"><span>The fix is a flake update, not a cask workaround</span></div>
+          <pre><code>cd "$HOME/dotfiles"
+nix flake update nix-homebrew
+./rebuild.sh</code></pre>
+        </div>
+
         <div class="callout">
           <strong>Keep updates small:</strong> update one layer at a time when possible. It makes failures easier to attribute and rollback.
         </div>
       </section>
 
-      <section class="guide-section" id="recovery" data-title="Recovery new Mac bootstrap clone reproduce migrate restore authentication">
+      <section class="guide-section" id="recovery" data-title="Recovery new Mac bootstrap clone reproduce migrate restore authentication bless vault npm worker tooling">
         <p class="eyebrow">11 / Recovery</p>
         <h2>Rebuild the setup on another Mac</h2>
         <p class="section-intro">The repository reproduces declared configuration. Authentication, private data, and undeclared Homebrew extras remain separate.</p>
@@ -2064,13 +2202,19 @@ brew upgrade --cask wezterm claude-code codex</code></pre>
           <article class="step">
             <div class="step-body">
               <h3>Run the bootstrap</h3>
-              <p>It installs or detects Determinate Nix, personalizes the user, runs the first nix-darwin switch, and clones First Mate into <code>~/firstmate</code>.</p>
+              <p>Five steps: install or detect Determinate Nix, link the repo to <code>~/.dotfiles</code>, configure the <code>settings.json</code> clean filter, check the configured username against yours, run the first nix-darwin switch, and clone First Mate into <code>~/firstmate</code>.</p>
             </div>
           </article>
           <article class="step">
             <div class="step-body">
-              <h3>Authenticate applications</h3>
-              <p>GitHub, Claude, Codex, Hermes providers, and any private services require interactive login. Secrets are not stored in the repository.</p>
+              <h3>Reinstall the npm worker layer</h3>
+              <p>The axi CLIs, <code>gnhf</code>, and <code>no-mistakes</code> are imperative and not managed by Nix. The README's "Agent worker tooling" section has the exact commands.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Authenticate and re-bless</h3>
+              <p>GitHub, Claude, Codex, Pi, Hermes providers, and any private services need an interactive login. Re-save the vault secrets and bless the <code>bin/</code> launchers - none of that is in the repository.</p>
             </div>
           </article>
           <article class="step">
@@ -2095,16 +2239,20 @@ cd "$HOME/dotfiles"
 
         <h3>What is not reproduced automatically</h3>
         <ul>
-          <li>GitHub, Claude, Codex, and Hermes login sessions or provider keys</li>
-          <li>SSH private keys and Keychain contents</li>
-          <li>Repositories other than the dotfiles fork and the fresh First Mate clone</li>
+          <li>GitHub, Claude, Codex, Pi, OpenCode, and Hermes login sessions or provider keys</li>
+          <li>SSH private keys and Keychain contents, including everything stored in Automic Vault</li>
+          <li>The blessings on the <code>bin/</code> launchers - each one needs <code>av bless</code> again on a new machine</li>
+          <li>Repositories other than this one and the fresh First Mate clone, plus First Mate's untracked local config</li>
           <li>The npm-installed worker CLIs (see the README's "Agent worker tooling" section for the reinstall commands)</li>
+          <li>Skills installed by the <code>skills</code> CLI - only the hand-authored ones under <code>home/skills/</code> are in this repo</li>
+          <li>The <code>nms-autostart</code> Herdr plugin, which lives here but has to be installed into Herdr</li>
+          <li>Pi's downloaded npm and git package trees, and Micro's own <code>~/.config/micro</code></li>
           <li>Wallpaper choice and other intentionally manual personal content</li>
           <li>The planned isolated sandbox network</li>
         </ul>
       </section>
 
-      <section class="guide-section" id="troubleshooting" data-title="Troubleshooting errors Nix missing darwin rebuild clobber zsh completion menu Dock Herdr MCP Node pager">
+      <section class="guide-section" id="troubleshooting" data-title="Troubleshooting errors Nix missing darwin rebuild clobber zsh completion menu Dock Herdr MCP Node pager PATH stale command not found unknown install step nms bless cleanup uninstall">
         <p class="eyebrow">12 / Troubleshooting</p>
         <h2>Known fixes from this build</h2>
         <p class="section-intro">These are the failures we actually encountered and the reasoning behind each fix.</p>
@@ -2175,7 +2323,7 @@ defaults read NSGlobalDomain _HIHideMenuBar
 printf 'Dock autohide: '
 defaults read com.apple.dock autohide</code></pre>
             </div>
-            <p>Your declared state is menu bar auto-hide <code>1</code> and Dock auto-hide <code>0</code>.</p>
+            <p><code>configuration.nix</code> declares both as auto-hiding, so both should read <code>1</code>. The other declared defaults are dark mode, fast key repeat (<code>KeyRepeat = 2</code>, <code>InitialKeyRepeat = 15</code>), always-visible file extensions, Finder list view, no desktop icons, and tap to click.</p>
           </div>
         </details>
 
@@ -2189,7 +2337,54 @@ defaults read com.apple.dock autohide</code></pre>
         <details>
           <summary>An agent plugin MCP fails because <code>node</code> is missing</summary>
           <div>
-            <p>Node.js is now declared in <code>home.nix</code>. After a rebuild, verify <code>command -v node</code>. Do not install another ad hoc Node copy to solve the same dependency.</p>
+            <p>Node comes from the Homebrew <code>node</code> formula declared in <code>configuration.nix</code>, because the Pi formula's native modules are ABI-bound to it. After a rebuild, verify <code>command -v node</code> resolves to <code>/opt/homebrew/bin/node</code>. Do not install another ad hoc Node copy, and do not add a Nix <code>nodejs</code> back to <code>home.nix</code> - it would only shadow the one Pi needs.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>A tool is installed, but the shell says <code>command not found</code></summary>
+          <div>
+            <p>This happens after a rebuild that changes the PATH. Home Manager applies its session variables once and sets a guard, <code>__HM_SESS_VARS_SOURCED</code>, that every nested shell inherits - so a shell that started before the rebuild keeps the old PATH forever, and any agent launched from it inherits that too.</p>
+            <p>Open a fresh WezTerm tab (or reboot), and restart long-lived hosts like the Herdr <em>server</em> from that fresh tab, not just the Herdr TUI. Restarting only the TUI leaves the old server environment in place.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Confirm which PATH a shell has</span></div>
+              <pre><code>printf '%s\n' "$PATH" | tr ':' '\n'
+command -v THE_MISSING_TOOL</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>A cask fails with <code>unknown install step</code> or a missing symlink source</summary>
+          <div>
+            <p>Homebrew's own code is pinned by the <code>brew-src</code> flake input and cannot be upgraded by <code>brew update</code>, so a current cask definition has met a Homebrew too old to parse it. Update the input rather than working around the cask.</p>
+            <div class="code-shell">
+              <div class="code-head"><span>Advance the pinned Homebrew</span></div>
+              <pre><code>cd "$HOME/dotfiles"
+nix flake update nix-homebrew
+./rebuild.sh</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Something you installed by hand disappeared after a rebuild</summary>
+          <div>
+            <p>That is <code>homebrew.onActivation.cleanup = "uninstall"</code> doing its job: every switch removes any Homebrew formula or cask not declared in <code>configuration.nix</code>. Declare it in the right list and rebuild. The setting stays at <code>"uninstall"</code> rather than <code>"zap"</code> precisely so an accidental omission costs you the package, not its data.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>nm: command not found</code>, or the daemon will not start</summary>
+          <div>
+            <p>The alias is <code>nms</code>, not <code>nm</code> - <code>nm</code> is binutils' symbol lister. Run <code>nms</code> in a herdr pane and leave it in the foreground. Never reach for <code>no-mistakes daemon start</code> or <code>daemon restart</code> as a fix; both silently break the pipeline's GitHub access without printing an error.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>An Automic Vault prompt appears on every launch of <code>cc</code>, <code>oc</code>, or the daemon</summary>
+          <div>
+            <p>Expected. The launchers in <code>bin/</code> are blessed without launcher endorsement, so each launch raises one approval dialog on purpose. If a launcher stops working entirely instead, check whether the file was edited - any edit voids its blessing, and it has to be re-blessed with <code>av bless</code> against the exact path.</p>
           </div>
         </details>
 
@@ -2201,7 +2396,7 @@ defaults read com.apple.dock autohide</code></pre>
         </details>
       </section>
 
-      <section class="guide-section" id="audit" data-title="Audit checklist verify status clean commands links defaults services">
+      <section class="guide-section" id="audit" data-title="Audit checklist verify status clean commands links defaults services av doctor daemon skills Pi">
         <p class="eyebrow">13 / Audit</p>
         <h2>Run a system check</h2>
         <p class="section-intro">This audit is read-only. It checks repository cleanliness, important command paths, macOS behavior, managed links, GitHub authentication, and services.</p>
@@ -2219,7 +2414,9 @@ defaults read NSGlobalDomain _HIHideMenuBar
 printf 'Dock autohide: '
 defaults read com.apple.dock autohide
 
-for cmd in nix brew darwin-rebuild micro node fzf jq rg lazygit gh herdr hermes claude codex opencode pi wezterm
+for cmd in nix brew darwin-rebuild micro node fzf jq rg lazygit gh herdr hermes \
+           claude codex opencode pi wezterm av treehouse tmux uv shellcheck \
+           tsc docker no-mistakes
 do
   printf '%-16s %s\n' "$cmd" "$(command -v "$cmd" || echo MISSING)"
 done
@@ -2227,14 +2424,31 @@ done
 printf '\nManaged instruction links:\n'
 ls -l "$HOME/.claude/CLAUDE.md" "$HOME/.codex/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 
+printf '\nManaged skill links:\n'
+ls -l "$HOME/.agents/skills/bro" "$HOME/.claude/skills/bro" "$HOME/.codex/skills/bro"
+
+printf '\nManaged Pi links:\n'
+ls -l "$HOME/.pi/agent/themes" "$HOME/.pi/agent/extensions" \
+      "$HOME/.pi/agent/models.json" "$HOME/.pi/agent/settings.json"
+
+printf '\nVault health:\n'
+av doctor
+
 printf '\nFirst Mate clone:\n'
 git -C "$HOME/firstmate" status --short --branch
+
+printf '\nno-mistakes daemon:\n'
+no-mistakes daemon status
 
 printf '\nGitHub authentication:\n'
 gh auth status
 
 printf '\nHomebrew services:\n'
 brew services list</code></pre>
+        </div>
+
+        <div class="callout warning">
+          <strong>Read-only means read-only:</strong> if <code>no-mistakes daemon status</code> reports the daemon is not running, start it with <code>nms</code> in a herdr pane. Do not "fix" it with <code>no-mistakes daemon start</code>.
         </div>
 
         <h3>Expected results</h3>
@@ -2249,7 +2463,7 @@ brew services list</code></pre>
           </div>
           <div class="check">
             <input id="audit-dock" type="checkbox">
-            <label for="audit-dock">Dock auto-hide is <code>0</code>.</label>
+            <label for="audit-dock">Dock auto-hide is <code>1</code>.</label>
           </div>
           <div class="check">
             <input id="audit-paths" type="checkbox">
@@ -2258,6 +2472,14 @@ brew services list</code></pre>
           <div class="check">
             <input id="audit-links" type="checkbox">
             <label for="audit-links">Claude, Codex, and OpenCode instruction files are symbolic links.</label>
+          </div>
+          <div class="check">
+            <input id="audit-skills" type="checkbox">
+            <label for="audit-skills">All three skill paths and all four Pi paths are symbolic links into <code>~/dotfiles</code>.</label>
+          </div>
+          <div class="check">
+            <input id="audit-vault" type="checkbox">
+            <label for="audit-vault"><code>av doctor</code> reports the hardened tools healthy.</label>
           </div>
           <div class="check">
             <input id="audit-auth" type="checkbox">
@@ -2310,6 +2532,45 @@ casks = [ "automic-vault" ];
 home.sessionPath = [ "/Applications/Automic Vault.app/Contents/MacOS" ];</code></pre>
         </div>
 
+        <h3>The blessed launchers in <code>bin/</code></h3>
+        <p>Four scripts in this repo start a tool with exactly one secret already in its environment. Each has an <code>av inject</code> shebang, so the secret exists only inside that process and never touches disk or a command line.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Launcher</th>
+                <th>Starts</th>
+                <th>Why it exists</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>bin/cc</code></td>
+                <td>Claude Code</td>
+                <td>Gives Claude a scoped GitHub token up front, so routine <code>gh</code> calls do not each raise a prompt.</td>
+              </tr>
+              <tr>
+                <td><code>bin/oc</code></td>
+                <td>OpenCode</td>
+                <td>Supplies the Anthropic key directly, so <code>opencode auth login</code> never writes plaintext credentials.</td>
+              </tr>
+              <tr>
+                <td><code>bin/fm-claude</code></td>
+                <td>A First Mate crewmate</td>
+                <td>Same token for spawned workers; a pure passthrough so First Mate keeps owning the flags.</td>
+              </tr>
+              <tr>
+                <td><code>bin/no-mistakes-daemon</code></td>
+                <td>The validation pipeline daemon</td>
+                <td>Runs it in the foreground from a herdr pane, which is the only supported way to start it.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning">
+          <strong>Editing a launcher voids its blessing.</strong> Blessing approves that exact file, byte for byte. After any change, re-run <code>av bless</code> against the same path - and note that this is also the protection working: an agent cannot append a line to a blessed script and keep its secret access.
+        </div>
+
         <h3>Everyday commands</h3>
         <div class="code-shell">
           <div class="code-head"><span>Audit and verify</span></div>
@@ -2326,7 +2587,7 @@ av harden sudo     <span class="comment"># optional: enable Touch ID for sudo</s
           <pre><code>av save OPENAI_API_KEY                       <span class="comment"># prompts for the value; stores it in the Keychain</span>
 av inject +OPENAI_API_KEY -- python train.py <span class="comment"># the key exists only inside this process</span></code></pre>
         </div>
-        <p>For a script you run often, put <code>av inject</code> in its shebang and <code>av bless</code> the file. Blessing approves that exact file, so any edit to it voids the approval - an agent cannot append a line to a blessed script and keep its secret access.</p>
+        <p>For a script you run often, put <code>av inject</code> in its shebang and <code>av bless</code> the file - the same pattern the <code>bin/</code> launchers above use.</p>
         <div class="code-shell">
           <div class="code-head"><span>a blessed script</span></div>
           <pre><code><span class="comment">#!/usr/local/bin/av inject +OPENAI_API_KEY /bin/zsh -f</span>
@@ -2336,8 +2597,8 @@ python eval.py
 av bless ./run-eval.sh</code></pre>
         </div>
 
-        <div class="callout warning">
-          <strong>Tuning agent prompts:</strong> the hardened <code>gh</code> uses a Secret Gate with per-app trust levels, set in the menu bar app (<code>av open --secret-gate gh</code>). Raising the <em>All Apps</em> default from <code>Read Only</code> to <code>Local Write Access</code> quiets routine clone and checkout prompts while still asking before remote mutations (<code>push</code>, <code>pr create</code>) and raw token extraction (<code>gh auth token</code>). Token extraction always prompts.
+        <div class="callout info">
+          <strong>How often you get prompted is a setting.</strong> The hardened <code>gh</code> uses a Secret Gate with per-app trust levels, managed in the menu bar app (<code>av open --secret-gate gh</code>). Higher trust means fewer prompts for routine reads, at the cost of a checkpoint you would otherwise have seen - so choose it deliberately, per app, rather than reaching for the most permissive level. Raw token extraction (<code>gh auth token</code>) always prompts regardless.
         </div>
 
         <h3>Keep GitHub tokens out of reach</h3>
@@ -2434,6 +2695,26 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
             <strong>First Mate</strong>
             <span>Agent-distro setup, project registration, crew operation, and delivery modes.</span>
           </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/no-mistakes" target="_blank" rel="noreferrer">
+            <strong>no-mistakes</strong>
+            <span>The push validation pipeline: review, tests, lint, docs, PR, and CI.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/treehouse" target="_blank" rel="noreferrer">
+            <strong>Treehouse</strong>
+            <span>The isolated git worktree pool that agent workers run in.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/earendil-works/pi" target="_blank" rel="noreferrer">
+            <strong>Pi coding agent</strong>
+            <span>Extensions, themes, settings, and the package system.</span>
+          </a>
+          <a class="doc-link" href="https://docs.orbstack.dev/" target="_blank" rel="noreferrer">
+            <strong>OrbStack</strong>
+            <span>The container and Linux VM runtime behind the <code>docker</code> CLI here.</span>
+          </a>
+          <a class="doc-link" href="https://rosepinetheme.com/palette" target="_blank" rel="noreferrer">
+            <strong>Rosé Pine palette</strong>
+            <span>The colour source for the terminal, editor, and Pi themes.</span>
+          </a>
         </div>
       </section>
 
@@ -2443,7 +2724,7 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
       </div>
 
       <footer class="page-footer">
-        Built and maintained as the published <code>MattH-ca/m.dotfiles</code> configuration, documenting the Macbook setup.
+        Built and maintained as the published <code>MattH-ca/m.dotfiles</code> configuration, documenting this Apple Silicon Mac setup.
       </footer>
     </main>
   </div>

@@ -35,7 +35,8 @@
 
 ## Private companion notes
 
-- Machine-specific notes (machine inventory, security posture, forensics) live in `~/dotfiles-private`, a private repo. When a change touches secrets, daemons, tokens, or machine inventory, record it there - never in the public dotfiles repo.
-- My machine-name glossary is defined there and imported below; if the import did not resolve, read `~/dotfiles-private/machines.md` before acting on a machine name you don't recognize.
+- Machine-specific notes (machine inventory, security posture, credential shape, forensics) live in `~/dotfiles-private`, a private repo. When a change touches secrets, daemons, tokens, or machine inventory, record it there - never in the public dotfiles repo. That includes describing how a credential is scoped, not just its value.
+- My machine-name glossary and my GitHub credential notes are defined there and imported below. If an import did not resolve, read `~/dotfiles-private/machines.md` before acting on a machine name you don't recognize, and `~/dotfiles-private/github.md` before diagnosing a failing `gh` call.
 
 @~/dotfiles-private/machines.md
+@~/dotfiles-private/github.md
