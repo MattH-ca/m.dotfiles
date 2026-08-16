@@ -2492,10 +2492,16 @@ brew services list</code></pre>
         </div>
       </section>
 
-      <section class="guide-section" id="vault" data-title="Automic Vault av secrets keychain harden gh Secret Gate inject save bless scan doctor approval agents credentials tokens isotope tap cask hardened wrapper">
+      <section class="guide-section" id="vault" data-title="Automic Vault av secrets keychain harden gh Secret Gate inject save bless unharden scan doctor hardeners list approval agents credentials tokens isotope tap cask hardened wrapper launcher blessed touch id sudo">
         <p class="eyebrow">14 / Automic Vault</p>
         <h2>Gate secret access, especially for agents</h2>
-        <p class="section-intro">Autonomous agents run shell commands as you, so anything that can read a token from a plain file or an ambient credential helper can read it too. Automic Vault moves secrets into the Keychain and puts a human-approval gate between your tools and those secrets. It ships in this setup as a Homebrew tap, a hardened <code>gh</code>, and a menu bar app.</p>
+        <p class="section-intro">This is the load-bearing security layer of the whole setup, and the one piece that makes the rest of it safe to run. Everything else here is about giving agents more autonomy; this is the counterweight.</p>
+
+        <div class="callout warning">
+          <strong>The problem it solves:</strong> an autonomous agent runs shell commands as you, with your environment and your file access. Anything that can read a token from a dotfile, a <code>.env</code>, or an ambient credential helper can read it too - and an agent that reads one has no obligation to tell you. Declaring <code>cc</code> and <code>co</code> as no-prompt aliases only makes sense because this layer exists underneath them.
+        </div>
+
+        <p>Automic Vault answers that by moving secrets into the macOS Keychain and putting a human-approval gate between your tools and those secrets. It ships in this setup as a Homebrew tap, a hardened <code>gh</code>, and a menu bar app.</p>
 
         <div class="grid-3">
           <article class="panel">
@@ -2571,14 +2577,89 @@ home.sessionPath = [ "/Applications/Automic Vault.app/Contents/MacOS" ];</code><
           <strong>Editing a launcher voids its blessing.</strong> Blessing approves that exact file, byte for byte. After any change, re-run <code>av bless</code> against the same path - and note that this is also the protection working: an agent cannot append a line to a blessed script and keep its secret access.
         </div>
 
-        <h3>Everyday commands</h3>
-        <div class="code-shell">
-          <div class="code-head"><span>Audit and verify</span></div>
-          <pre><code>av doctor          <span class="comment"># are the hardened tools healthy?</span>
-av scan            <span class="comment"># audit secrets and configuration (a report, not an error)</span>
-av harden sudo     <span class="comment"># optional: enable Touch ID for sudo</span></code></pre>
+        <h3>The whole command surface</h3>
+        <p><code>av help</code> prints this list; it is short enough to learn in one sitting.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>What it does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>av save &lt;key&gt;</code></td>
+                <td>Prompt for a secret value and store it in the login Keychain. The value is never typed on a command line.</td>
+              </tr>
+              <tr>
+                <td><code>av list</code></td>
+                <td>List the <em>names</em> of stored secrets. Never prints values.</td>
+              </tr>
+              <tr>
+                <td><code>av inject +KEY [--] &lt;cmd&gt;</code></td>
+                <td>Run one command with those secrets in its environment, and nowhere else.</td>
+              </tr>
+              <tr>
+                <td><code>av inject -- &lt;cmd&gt;</code></td>
+                <td>Run an already-approved script.</td>
+              </tr>
+              <tr>
+                <td><code>av bless &lt;path&gt;</code></td>
+                <td>Review and approve one exact file for secret access.</td>
+              </tr>
+              <tr>
+                <td><code>av harden &lt;tool&gt;</code></td>
+                <td>Replace a tool with a hardened build and migrate its credentials into the Keychain.</td>
+              </tr>
+              <tr>
+                <td><code>av unharden brew</code></td>
+                <td>Temporarily restore stock Homebrew - needed for some cask migrations.</td>
+              </tr>
+              <tr>
+                <td><code>av doctor [&lt;tool&gt;]</code></td>
+                <td>Verify the installed hardening is healthy.</td>
+              </tr>
+              <tr>
+                <td><code>av scan</code></td>
+                <td>Audit secrets and configuration, reporting findings by severity.</td>
+              </tr>
+              <tr>
+                <td><code>av hardeners --json</code></td>
+                <td>Show every available hardener and which ones apply to this machine.</td>
+              </tr>
+              <tr>
+                <td><code>av open [--secret-gate &lt;id&gt;]</code></td>
+                <td>Open the menu bar app, optionally straight to one tool's gate settings.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <p><code>av scan</code> prints an audit of findings by severity. A wall of <code>HIGH</code> findings is the report doing its job, not a crash; on a Nix and Homebrew Mac the <code>PATH</code>-ordering findings are inherent and expected.</p>
+
+        <h3>Reading the two audit commands</h3>
+        <div class="grid-2">
+          <article class="panel">
+            <span class="panel-accent">av doctor</span>
+            <h3>Is the hardening intact?</h3>
+            <p>Prints one line per tool it manages and ends with <code>No problems found</code> when everything is healthy. Run it after any rebuild that touched Homebrew, and on a new machine before trusting the setup.</p>
+          </article>
+          <article class="panel">
+            <span class="panel-accent">av scan</span>
+            <h3>What is exposed right now?</h3>
+            <p>A severity-ranked report, not a pass/fail gate. A wall of <code>HIGH</code> findings is the report doing its job. On a Nix and Homebrew Mac the <code>PATH</code>-ordering findings are inherent and expected.</p>
+          </article>
+        </div>
+
+        <h3>Hardening a tool</h3>
+        <p>A hardener does more than wrap a binary: it migrates that tool's existing credentials out of its plaintext config and into the Keychain, then leaves a small launcher on <code>PATH</code> in its place. Automic Vault ships around fifty of them, covering the usual credential-bearing CLIs - <code>aws</code>, <code>docker</code>, <code>brew</code>, <code>gh</code>, <code>stripe</code>, <code>supabase</code>, <code>node</code>, <code>sudo</code> and many more. This config declares the hardened GitHub CLI as a Homebrew formula so a rebuild installs it; anything else is an interactive choice.</p>
+        <div class="code-shell">
+          <div class="code-head"><span>See what applies, then decide</span></div>
+          <pre><code>av hardeners --json | jq -r '.hardeners[]
+  | select(.applicable) | "\(.name)\t hardened=\(.hardened)"'
+
+av harden sudo     <span class="comment"># e.g. approve sudo with Touch ID instead of a password</span>
+av doctor          <span class="comment"># confirm it is healthy afterwards</span></code></pre>
+        </div>
 
         <h3>Store and inject your own secrets</h3>
         <p>Instead of exporting a key in a dotfile or a <code>.env</code>, keep it in the vault and hand it to one command for the duration of that command only.</p>
@@ -2601,6 +2682,42 @@ av bless ./run-eval.sh</code></pre>
           <strong>How often you get prompted is a setting.</strong> The hardened <code>gh</code> uses a Secret Gate with per-app trust levels, managed in the menu bar app (<code>av open --secret-gate gh</code>). Higher trust means fewer prompts for routine reads, at the cost of a checkpoint you would otherwise have seen - so choose it deliberately, per app, rather than reaching for the most permissive level. Raw token extraction (<code>gh auth token</code>) always prompts regardless.
         </div>
 
+        <h3>Standing this up on a new machine</h3>
+        <p>The rebuild installs the tap, the hardened <code>gh</code>, the app, and the <code>PATH</code> entry. Everything after that is deliberately manual, because it is exactly the part that must not be reproducible from a public repository.</p>
+        <div class="steps">
+          <article class="step">
+            <div class="step-body">
+              <h3>Launch the app once</h3>
+              <p>It needs to be running for approvals to reach you. Confirm the CLI resolves with <code>command -v av</code>.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Re-save every secret</h3>
+              <p><code>av save KEY</code> for each one. Keychain contents do not travel with the repo, and you should be the one typing the values.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Re-bless the launchers</h3>
+              <p>Blessings are per-file and per-machine. Every script in <code>bin/</code> needs <code>av bless</code> again before its alias works.</p>
+            </div>
+          </article>
+          <article class="step">
+            <div class="step-body">
+              <h3>Verify</h3>
+              <p><code>av doctor</code> should report no problems, and <code>av list</code> should show the names you expect.</p>
+            </div>
+          </article>
+        </div>
+        <div class="code-shell">
+          <div class="code-head"><span>Re-bless the four launchers</span></div>
+          <pre><code>for f in cc oc fm-claude no-mistakes-daemon; do
+  av bless "$HOME/dotfiles/bin/$f"
+done
+av doctor</code></pre>
+        </div>
+
         <h3>Keep GitHub tokens out of reach</h3>
         <p>An HTTPS remote plus the <code>osxkeychain</code> credential helper lets any process retrieve your GitHub token through <code>git credential fill</code>. Prefer SSH remotes, which are not extractable that way.</p>
         <div class="code-shell">
@@ -2610,9 +2727,122 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
         </div>
       </section>
 
-      <section class="guide-section" id="references" data-title="References documentation links Nix Darwin Home Manager Herdr WezTerm Micro GitHub Hermes First Mate">
+      <section class="guide-section" id="references" data-title="References credits acknowledgements thanks documentation links upstream fork Nix Darwin Home Manager Herdr WezTerm Micro GitHub Hermes First Mate Pi Treehouse no-mistakes Automic Vault Rose Pine">
         <p class="eyebrow">15 / References</p>
-        <h2>Documentation</h2>
+        <h2>Standing on other people's work</h2>
+        <p class="section-intro">Almost nothing here was invented for this repository. It is an assembly of other people's projects, and the parts that feel clever are usually theirs. This section credits what it was built from, then points at the documentation worth reading.</p>
+
+        <div class="callout info">
+          <strong>Where this started:</strong> this repo began as a working copy of <a href="https://github.com/kunchenguid/dotfiles" target="_blank" rel="noreferrer">kunchenguid/dotfiles</a> - Kun Chen's dotfiles for agentic engineering - and grew from there. The <a href="https://youtu.be/5N-okeDdIuI" target="_blank" rel="noreferrer">walkthrough video</a> is what made the whole approach click. The structure of the flake, the bootstrap, and the symlink model are all downstream of that work.
+        </div>
+
+        <h3>The agent layer</h3>
+        <p>A large share of the orchestration tooling is also Kun Chen's. First Mate coordinates the crews, Treehouse gives each worker an isolated worktree, no-mistakes gates every delivery, and the axi CLIs are what the agents actually reach for.</p>
+
+        <div class="link-grid">
+          <a class="doc-link" href="https://github.com/kunchenguid/dotfiles" target="_blank" rel="noreferrer">
+            <strong>kunchenguid/dotfiles</strong>
+            <span>The upstream this repository grew out of.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/firstmate" target="_blank" rel="noreferrer">
+            <strong>First Mate</strong>
+            <span>Talk to one agent, ship with a crew. The distro cloned into <code>~/firstmate</code>.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/treehouse" target="_blank" rel="noreferrer">
+            <strong>Treehouse</strong>
+            <span>Manage worktrees without managing worktrees. The isolated pool workers run in.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/no-mistakes" target="_blank" rel="noreferrer">
+            <strong>no-mistakes</strong>
+            <span>The push validation pipeline: review, tests, lint, docs, PR, and CI.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/lavish-axi" target="_blank" rel="noreferrer">
+            <strong>Lavish and the axi CLIs</strong>
+            <span>Agent-facing tools for GitHub, the browser, tasks, quota, and visual review.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/kunchenguid/gnhf" target="_blank" rel="noreferrer">
+            <strong>gnhf</strong>
+            <span>"Good night, have fun" - the overnight autonomous-loop orchestrator.</span>
+          </a>
+        </div>
+
+        <h3>The tools this setup is made of</h3>
+        <div class="link-grid">
+          <a class="doc-link" href="https://www.automicvault.com/" target="_blank" rel="noreferrer">
+            <strong>Automic Vault</strong>
+            <span>The secret gate in section 14, and the reason the autonomous aliases are safe.</span>
+          </a>
+          <a class="doc-link" href="https://herdr.dev" target="_blank" rel="noreferrer">
+            <strong>Herdr</strong>
+            <span>The agent terminal: workspaces, tabs, panes, and live agent state.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/earendil-works/pi" target="_blank" rel="noreferrer">
+            <strong>Pi</strong>
+            <span>Agent toolkit and coding agent. Pi Calm here is adapted from First Mate under MIT.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer">
+            <strong>Hermes Agent</strong>
+            <span>Nous Research's personal agent, installed straight from its own flake.</span>
+          </a>
+          <a class="doc-link" href="https://determinate.systems/" target="_blank" rel="noreferrer">
+            <strong>Determinate Systems</strong>
+            <span>The Nix installer and daemon this machine is built on.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/nix-darwin/nix-darwin" target="_blank" rel="noreferrer">
+            <strong>nix-darwin</strong>
+            <span>macOS as a declarative system, including the Homebrew module.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/nix-community/home-manager" target="_blank" rel="noreferrer">
+            <strong>Home Manager</strong>
+            <span>The user environment: packages, shell, prompt, and every symlink.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/zhaofengli/nix-homebrew" target="_blank" rel="noreferrer">
+            <strong>nix-homebrew</strong>
+            <span>Puts Homebrew itself under Nix's control.</span>
+          </a>
+          <a class="doc-link" href="https://wezterm.org/" target="_blank" rel="noreferrer">
+            <strong>WezTerm</strong>
+            <span>The terminal, configured in Lua and hot-reloading.</span>
+          </a>
+          <a class="doc-link" href="https://micro-editor.github.io/" target="_blank" rel="noreferrer">
+            <strong>Micro</strong>
+            <span>A terminal editor with conventional keybindings.</span>
+          </a>
+          <a class="doc-link" href="https://starship.rs/" target="_blank" rel="noreferrer">
+            <strong>Starship</strong>
+            <span>The prompt.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/jesseduffield/lazygit" target="_blank" rel="noreferrer">
+            <strong>Lazygit</strong>
+            <span>The Git interface in section 09.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/BurntSushi/ripgrep" target="_blank" rel="noreferrer">
+            <strong>ripgrep</strong>
+            <span>Fast recursive search, plus <code>fd</code>, <code>bat</code>, and <code>jq</code> alongside it.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/junegunn/fzf" target="_blank" rel="noreferrer">
+            <strong>fzf</strong>
+            <span>Fuzzy selection for any list.</span>
+          </a>
+          <a class="doc-link" href="https://orbstack.dev/" target="_blank" rel="noreferrer">
+            <strong>OrbStack</strong>
+            <span>Containers and Linux VMs, in place of Docker Desktop.</span>
+          </a>
+          <a class="doc-link" href="https://rosepinetheme.com/" target="_blank" rel="noreferrer">
+            <strong>Rosé Pine</strong>
+            <span>The palette behind the terminal, editor, and Pi themes.</span>
+          </a>
+          <a class="doc-link" href="https://www.nerdfonts.com/" target="_blank" rel="noreferrer">
+            <strong>Nerd Fonts</strong>
+            <span>Hack Nerd Font, which is why the prompt glyphs render.</span>
+          </a>
+          <a class="doc-link" href="https://github.com/my-monkeys/OpenSuperWhisper" target="_blank" rel="noreferrer">
+            <strong>OpenSuperWhisper</strong>
+            <span>Local dictation, installed from the <code>my-monkeys</code> tap.</span>
+          </a>
+        </div>
+
+        <h3>Documentation</h3>
 
         <div class="link-grid">
           <a class="doc-link" href="https://github.com/MattH-ca/m.dotfiles" target="_blank" rel="noreferrer">
@@ -2643,10 +2873,6 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
             <strong>WezTerm configuration</strong>
             <span>Lua files, hot reload, and configuration structure.</span>
           </a>
-          <a class="doc-link" href="https://micro-editor.github.io/" target="_blank" rel="noreferrer">
-            <strong>Micro editor</strong>
-            <span>Official project overview, installation, and built-in help.</span>
-          </a>
           <a class="doc-link" href="https://github.com/micro-editor/micro/blob/master/runtime/help/defaultkeys.md" target="_blank" rel="noreferrer">
             <strong>Micro default keys</strong>
             <span>Direct reference for the editor's current default keyboard shortcuts.</span>
@@ -2654,14 +2880,6 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
           <a class="doc-link" href="https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md" target="_blank" rel="noreferrer">
             <strong>ripgrep guide</strong>
             <span>Recursive search, filtering, patterns, and file types.</span>
-          </a>
-          <a class="doc-link" href="https://github.com/junegunn/fzf" target="_blank" rel="noreferrer">
-            <strong>fzf documentation</strong>
-            <span>Fuzzy selection, shell integrations, and examples.</span>
-          </a>
-          <a class="doc-link" href="https://github.com/jesseduffield/lazygit" target="_blank" rel="noreferrer">
-            <strong>Lazygit</strong>
-            <span>Terminal Git interface, keybindings, and configuration.</span>
           </a>
           <a class="doc-link" href="https://herdr.dev/docs/quick-start/" target="_blank" rel="noreferrer">
             <strong>Herdr quick start</strong>
@@ -2691,29 +2909,9 @@ printf 'protocol=https\nhost=github.com\n\n' | git credential reject  <span clas
             <strong>Hermes Agent</strong>
             <span>Setup, providers, tools, memory, gateways, and configuration.</span>
           </a>
-          <a class="doc-link" href="https://github.com/kunchenguid/firstmate" target="_blank" rel="noreferrer">
-            <strong>First Mate</strong>
-            <span>Agent-distro setup, project registration, crew operation, and delivery modes.</span>
-          </a>
-          <a class="doc-link" href="https://github.com/kunchenguid/no-mistakes" target="_blank" rel="noreferrer">
-            <strong>no-mistakes</strong>
-            <span>The push validation pipeline: review, tests, lint, docs, PR, and CI.</span>
-          </a>
-          <a class="doc-link" href="https://github.com/kunchenguid/treehouse" target="_blank" rel="noreferrer">
-            <strong>Treehouse</strong>
-            <span>The isolated git worktree pool that agent workers run in.</span>
-          </a>
-          <a class="doc-link" href="https://github.com/earendil-works/pi" target="_blank" rel="noreferrer">
-            <strong>Pi coding agent</strong>
-            <span>Extensions, themes, settings, and the package system.</span>
-          </a>
           <a class="doc-link" href="https://docs.orbstack.dev/" target="_blank" rel="noreferrer">
             <strong>OrbStack</strong>
             <span>The container and Linux VM runtime behind the <code>docker</code> CLI here.</span>
-          </a>
-          <a class="doc-link" href="https://rosepinetheme.com/palette" target="_blank" rel="noreferrer">
-            <strong>Rosé Pine palette</strong>
-            <span>The colour source for the terminal, editor, and Pi themes.</span>
           </a>
         </div>
       </section>
