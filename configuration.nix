@@ -61,6 +61,7 @@
       "orbstack"         # container + Linux VM runtime, replaces Docker Desktop
       "claude-code"
       "codex"
+      "codexbar"         # menu bar usage monitor for Codex and Claude
       "my-monkeys/tap/opensuperwhisper"
       "mos"
       "obsidian"
@@ -75,7 +76,7 @@
       "brave-browser"
       "google-chrome"
       "github"           # GitHub Desktop
-      "syncthing"
+      "syncthing-app"    # renamed upstream from "syncthing"
       # Adopting this crosses 0.5.14 -> 1.4.4, a major version. If Buzz's
       # models or settings do not survive that, drop this line and reinstall
       # the 0.x build by hand rather than pinning the cask.
