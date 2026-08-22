@@ -51,6 +51,7 @@
       "age"
       "automic-vault/isotopes/gh-cli"
       "node"             # the machine's only node; agent tooling binds to it
+      "pi-coding-agent"  # homebrew-core; tracks Pi releases, unlike nixpkgs 26.05
       "docker"           # CLI client only; OrbStack (cask below) is the engine
       "ollama"
       "llama.cpp"

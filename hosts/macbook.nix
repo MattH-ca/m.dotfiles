@@ -4,7 +4,6 @@
 {
   homebrew.brews = [
     "herdr"            # agent terminal runtime; hosts the no-mistakes daemon pane
-    "pi-coding-agent"  # homebrew-core; tracks Pi releases, unlike nixpkgs 26.05
   ];
   homebrew.casks = [
     "codexbar"         # menu bar usage monitor for Codex and Claude
