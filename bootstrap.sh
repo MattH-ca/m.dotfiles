@@ -63,11 +63,13 @@ echo "==> Step 4: first darwin-rebuild switch (pinned to nix-darwin-26.05)"
 # on PATH here. Resolve the absolute path first and invoke that instead.
 NIX_BIN="$(command -v nix)"
 # Pick the flake host the same way rebuild.sh does (see flake.nix for the list).
-case "$(hostname -s | tr '[:upper:]' '[:lower:]')" in
+# LocalHostName, not `hostname`: the latter follows DHCP/DNS and changes with
+# the network, while LocalHostName is the stable name set in Sharing settings.
+case "$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')" in
   *book*)   HOST=macbook ;;
   *studio*) HOST=studio ;;
   *)
-    echo "    Unrecognized hostname '$(hostname -s)'."
+    echo "    Unrecognized hostname '$(scutil --get LocalHostName)'."
     echo "    Edit this case block or run rebuild.sh <host> manually (hosts: macbook, studio)."
     exit 1
     ;;

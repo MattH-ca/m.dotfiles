@@ -3,11 +3,11 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 # Pick the flake host from the machine name, or take it as the first argument.
-# Hostnames map by substring so DHCP/scutil renames like "Matthews-MacBook-Pro"
-# vs "macbook" both land on the right host.
+# LocalHostName, not `hostname`: the latter follows DHCP/DNS and changes with
+# the network, while LocalHostName is the stable name set in Sharing settings.
 HOST="${1:-}"
 if [ -z "$HOST" ]; then
-  case "$(hostname -s | tr '[:upper:]' '[:lower:]')" in
+  case "$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')" in
     *book*)   HOST=macbook ;;
     *studio*) HOST=studio ;;
     *)
