@@ -46,6 +46,10 @@
     ];
     onActivation.cleanup = "uninstall";  # remove anything not declared here
     onActivation.autoUpdate = true;
+    # Every rebuild also upgrades all installed brews/casks to current. Deliberate
+    # tradeoff: rebuilds are no longer no-ops, and an unrelated rebuild can bump
+    # node (Pi's native modules are ABI-bound to it - reinstall Pi if it breaks).
+    onActivation.upgrade = true;
     onActivation.extraFlags = [ "--force" ];
     brews = [
       "age"
