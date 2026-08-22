@@ -160,7 +160,7 @@ The declarative half lives in this repo: `tmux` (hosts each worker in its own te
 The imperative half is installed once per machine and is NOT managed by Nix, so on a fresh Mac rerun these after bootstrap:
 
 ```sh
-npm install -g gh-axi chrome-devtools-axi lavish-axi tasks-axi quota-axi gnhf
+npm install -g gh-axi chrome-devtools-axi lavish-axi tasks-axi quota-axi gnhf @deepseek-ai/dsh
 gh-axi setup hooks && chrome-devtools-axi setup hooks && lavish-axi setup hooks
 NO_MISTAKES_LINK_DIR="$HOME/.no-mistakes/bin" \
   sh -c 'curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh | sh'
@@ -170,6 +170,9 @@ npx -y skills add kunchenguid/gnhf --skill gnhf -g
 
 - The axi tools are agent-facing CLIs: `gh-axi` (GitHub), `chrome-devtools-axi` (browser), `lavish-axi` (visual reports and decisions), `tasks-axi` (task queue), `quota-axi` (usage headroom). Their `setup hooks` steps write ambient-context hooks into the tracked `home/.claude/settings.json`.
 - `gnhf` is an overnight autonomous-loop orchestrator, installed with its agent skill.
+- `@deepseek-ai/dsh` is [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), a plugin-based agent runtime.
+  Launch it on demand with the `dsh` alias, which runs the blessed `bin/dsh` (injects `GH_TOKEN` from Automic Vault; needs `av bless ~/dotfiles/bin/dsh`); the web UI listens on `127.0.0.1:3080`.
+  Its model backend signs in with ChatGPT OAuth from the web UI's Settings → Models page and keeps that token in its own credential store, like Codex's `~/.codex/auth.json`.
 - `no-mistakes` is the git push validation pipeline First Mate uses for delivery. Setting `NO_MISTAKES_LINK_DIR` to the install dir makes the installer skip its `/usr/local/bin` symlink, which is the only step that wants sudo; `home.nix` puts `~/.no-mistakes/bin` on the PATH instead.
 - The `skills add` commands install the `lavish` and `gnhf` skills globally for Claude Code (`~/.claude/skills` and `~/.agents/skills`).
 

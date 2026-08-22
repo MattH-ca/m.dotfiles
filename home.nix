@@ -69,6 +69,9 @@ in
       # Blessed av script (see bin/oc): injects ANTHROPIC_API_KEY so opencode
       # authenticates without a plaintext auth.json on disk
       oc = "${dotfiles}/bin/oc";
+      # Blessed av script (see bin/dsh): injects GH_TOKEN for DeepSeek Harness.
+      # The alias shadows the raw npm binary, so launches go through the vault.
+      dsh = "${dotfiles}/bin/dsh";
       # no-mistakes itself needs no alias: ~/.no-mistakes/bin is on the PATH above.
       # Its daemon runs in the foreground from a herdr pane via nms
       # (bin/no-mistakes-daemon), never from launchd or `daemon start`.

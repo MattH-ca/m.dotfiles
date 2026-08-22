@@ -1,0 +1,7 @@
+#!/usr/local/bin/av inject +GH_TOKEN /bin/sh
+# Blessed launcher: hands DeepSeek Harness its GitHub token for the pane's
+# lifetime, so its agents can use gh without a plaintext token on disk.
+# Model auth is separate: dsh holds its ChatGPT OAuth token in its own
+# credential store (a documented exception, see dotfiles-private).
+# Editing this file invalidates the blessing; re-run: av bless ~/dotfiles/bin/dsh
+exec dsh "$@"
