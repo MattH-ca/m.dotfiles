@@ -26,9 +26,9 @@ bootstrap:
 check:
     nix flake check --no-build
 
-# Build the whole system without activating it
+# Build both hosts' systems without activating anything
 dry-run:
-    nix build .#darwinConfigurations.mac.system --dry-run
+    nix build .#darwinConfigurations.macbook.system .#darwinConfigurations.studio.system --dry-run
 
 # bin/ is excluded on purpose: shellcheck cannot parse the `av inject` shebang,
 # and adding a shellcheck directive would change those files' contents and cost

@@ -24,12 +24,14 @@
       # The one username line to change if this isn't your machine.
       # bootstrap.sh offers to rewrite this for you if your macOS username differs.
       user = "matth";
-    in
-    {
-      darwinConfigurations."mac" = nix-darwin.lib.darwinSystem {
+
+      # Every host shares the same base; hosts/<name>.nix holds the differences.
+      # rebuild.sh and bootstrap.sh pick the host from the machine's hostname.
+      mkHost = hostModule: nix-darwin.lib.darwinSystem {
         specialArgs = { inherit user; };
         modules = [
-          ./configuration.nix
+          ./hosts/common.nix
+          hostModule
           nix-homebrew.darwinModules.nix-homebrew
           home-manager.darwinModules.home-manager
           {
@@ -40,5 +42,9 @@
           }
         ];
       };
+    in
+    {
+      darwinConfigurations."macbook" = mkHost ./hosts/macbook.nix;
+      darwinConfigurations."studio" = mkHost ./hosts/studio.nix;
     };
 }

@@ -33,7 +33,7 @@ Running the switch builds:
 
 - Apple Silicon Mac, by default.
 - Intel Mac: change one line.
-  In `configuration.nix`, set `nixpkgs.hostPlatform = "x86_64-darwin";` (the comment right there tells you the same thing).
+  In `hosts/common.nix`, set `nixpkgs.hostPlatform = "x86_64-darwin";` (the comment right there tells you the same thing).
 
 ## Fresh-machine setup
 
@@ -71,10 +71,10 @@ Once Nix is installed (`bootstrap.sh` step 1 handles that), you can check that t
 
 ```sh
 nix flake check --no-build
-nix build .#darwinConfigurations.mac.system --dry-run
+nix build .#darwinConfigurations.macbook.system .#darwinConfigurations.studio.system --dry-run
 ```
 
-If you renamed the host label in "Make it yours", substitute your label for `mac` in these commands.
+If you renamed or added host labels in "Make it yours", substitute your labels in these commands.
 
 ## Daily use
 
@@ -93,10 +93,9 @@ This repo is mine.
 If you clone it, review these before you run `bootstrap.sh`:
 
 - **Username**: run `./bootstrap.sh` (it detects your macOS username and offers to set it) OR change the single `user = "matth"` line in `flake.nix`.
-  Everything else (`configuration.nix`, `home.nix`, home directory paths) is threaded from that one variable.
-- **Host label** `"mac"`, in three places: `flake.nix` (the `darwinConfigurations."mac"` name), `rebuild.sh:5` (the `#mac` at the end of the flake reference), and `bootstrap.sh`'s first-switch command (also `#mac`).
-  All three have to match.
-- **CPU architecture**, `hostPlatform` in `configuration.nix` (see Prerequisites above).
+  Everything else (the `hosts/` modules, `home.nix`, home directory paths) is threaded from that one variable.
+- **Host labels**: `flake.nix` defines one `darwinConfigurations` entry per machine (`macbook`, `studio`), each importing `hosts/common.nix` plus its own `hosts/<name>.nix`. `rebuild.sh` and `bootstrap.sh` pick the host from your hostname; adjust their `case` blocks (or pass `./rebuild.sh <host>`) if your machine names differ.
+- **CPU architecture**, `hostPlatform` in `hosts/common.nix` (see Prerequisites above).
 
 **Git identity:** this config deliberately does not set your git name or email.
 Git will stop your first commit and tell you to set them (`git config --global user.name "Your Name"` and `git config --global user.email you@example.com`).
@@ -112,8 +111,8 @@ programs.git = {
 };
 ```
 
-**Homebrew cleanup warning:** `configuration.nix` sets `homebrew.onActivation.cleanup = "uninstall"`.
-That means every time you switch, Homebrew removes any package or cask on your machine that isn't listed in the `brews` and `casks` arrays in `configuration.nix` (their app data and config files are left in place; that would need `"zap"`).
+**Homebrew cleanup warning:** `hosts/common.nix` sets `homebrew.onActivation.cleanup = "uninstall"`.
+That means every time you switch, Homebrew removes any package or cask on your machine that isn't listed in the `brews` and `casks` arrays in the `hosts/` modules (their app data and config files are left in place; that would need `"zap"`).
 If you already have Homebrew stuff installed that isn't in that list, the first switch will uninstall it.
 Read through `brews` and `casks` before you run `bootstrap.sh` or `rebuild.sh` for the first time, and add anything you want to keep.
 
@@ -124,7 +123,7 @@ If you don't use it, just remove it from `brews` in your copy.
 **About Automic Vault:** the `automic-vault` cask and the `automic-vault/isotopes/gh-cli` brew (from the `automic-vault/isotopes` tap) install a background security tool that hardens secret access on this Mac.
 It replaces the GitHub CLI with a codesigned build whose token lives in the Keychain, so any authenticated `gh` use - including commands your agents run - passes through an approval gate. Expect an approval notification the first time an agent uses `gh`; that is the tool working, not a broken CLI.
 The command is `av` (the app is spelled "Automic Vault"): `av doctor` verifies the hardening, `av scan` audits the system, and `av save` / `av inject` / `av bless` store and hand secrets to individual commands. The [field guide's Automic Vault section](https://matth-ca.github.io/m.dotfiles/#vault) covers the full workflow.
-To opt out, remove all three entries (the tap, the `gh-cli` brew, and the cask) from `configuration.nix`, and the `av` PATH line from `home.nix`.
+To opt out, remove all three entries (the tap, the `gh-cli` brew, and the cask) from `hosts/common.nix`, and the `av` PATH line from `home.nix`.
 
 **Heads-up:**
 
@@ -139,7 +138,8 @@ To opt out, remove all three entries (the tap, the `gh-cli` brew, and the cask) 
 
 - `flake.nix` - the entry point.
   Wires up nixpkgs, nix-darwin, home-manager, and nix-homebrew, and declares the `mac` machine.
-- `configuration.nix` - system-level config: macOS defaults, Homebrew.
+- `hosts/common.nix` - system-level config shared by every machine: macOS defaults, Homebrew.
+- `hosts/macbook.nix`, `hosts/studio.nix` - per-machine packages on top of the common base.
 - `home.nix` - user-level config: shell, packages, prompt, and the symlinks described below.
 - `rebuild.sh` - re-applies the config after the first switch.
   Run this every time you make a change.
@@ -191,7 +191,7 @@ Open a fresh WezTerm tab (or reboot), and restart long-lived hosts like the herd
 ## Optional Pi configuration
 
 Pi is often installed with a manual `npm install -g`. This repo declares it instead, as the
-homebrew-core `pi-coding-agent` formula in `configuration.nix`, so the switch installs it
+homebrew-core `pi-coding-agent` formula in `hosts/macbook.nix`, so the switch installs it
 for you. Homebrew is used rather than Nix because the `nixpkgs-26.05-darwin` release branch
 freezes Pi at 0.75.4 while Pi itself ships releases continuously; homebrew-core tracks them.
 

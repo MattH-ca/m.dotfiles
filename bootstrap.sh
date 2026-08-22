@@ -62,10 +62,19 @@ echo "==> Step 4: first darwin-rebuild switch (pinned to nix-darwin-26.05)"
 # freshly installed `nix` would not be found under sudo even though it's
 # on PATH here. Resolve the absolute path first and invoke that instead.
 NIX_BIN="$(command -v nix)"
-# "mac" is the flake host label - if you renamed it, change it in flake.nix
-# and rebuild.sh too.
+# Pick the flake host the same way rebuild.sh does (see flake.nix for the list).
+case "$(hostname -s | tr '[:upper:]' '[:lower:]')" in
+  *book*)   HOST=macbook ;;
+  *studio*) HOST=studio ;;
+  *)
+    echo "    Unrecognized hostname '$(hostname -s)'."
+    echo "    Edit this case block or run rebuild.sh <host> manually (hosts: macbook, studio)."
+    exit 1
+    ;;
+esac
+echo "    building host \"$HOST\""
 sudo "$NIX_BIN" run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- \
-  switch --flake ~/.dotfiles#mac
+  switch --flake ~/.dotfiles#"$HOST"
 # If this still fails with "nix: command not found", open a new terminal
 # (Determinate adds nix to new shells' PATH) and re-run ./bootstrap.sh.
 

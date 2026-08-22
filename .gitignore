@@ -26,3 +26,6 @@ result-*
 # ~/dotfiles-private if they are to be versioned at all.
 notes/
 backlog.md
+
+# lavish review artifacts (session-local review surfaces)
+.lavish/

@@ -22,7 +22,7 @@ in
     just      # task runner; see the justfile at the repo root
     lazygit
     micro
-    # node and pi-coding-agent both come from homebrew (see configuration.nix).
+    # node comes from homebrew (hosts/common.nix); pi-coding-agent too (hosts/macbook.nix).
     # nixpkgs 26.05 freezes Pi at 0.75.4 and Pi ships releases far faster; the
     # formula's native modules are ABI-bound to homebrew's node, and /opt/homebrew
     # precedes the nix profiles on PATH, so a nix nodejs here would only shadow it.

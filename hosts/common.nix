@@ -1,3 +1,5 @@
+# Shared base for every host. Per-machine packages live in hosts/<name>.nix;
+# homebrew.brews/casks and home-manager package lists merge across modules.
 { user, ... }:
 
 {
@@ -48,9 +50,7 @@
     brews = [
       "age"
       "automic-vault/isotopes/gh-cli"
-      "herdr"
-      "node"             # the machine's only node; pi-coding-agent binds to it
-      "pi-coding-agent"  # homebrew-core; tracks Pi releases, unlike nixpkgs 26.05
+      "node"             # the machine's only node; agent tooling binds to it
       "docker"           # CLI client only; OrbStack (cask below) is the engine
       "ollama"
       "llama.cpp"
@@ -61,9 +61,7 @@
       "orbstack"         # container + Linux VM runtime, replaces Docker Desktop
       "claude-code"
       "codex"
-      "codexbar"         # menu bar usage monitor for Codex and Claude
       "my-monkeys/tap/opensuperwhisper"
-      "mos"
       "obsidian"
       "veracrypt"
       "macfuse"
@@ -77,10 +75,6 @@
       "google-chrome"
       "github"           # GitHub Desktop
       "syncthing-app"    # renamed upstream from "syncthing"
-      # Adopting this crosses 0.5.14 -> 1.4.4, a major version. If Buzz's
-      # models or settings do not survive that, drop this line and reinstall
-      # the 0.x build by hand rather than pinning the cask.
-      "buzz"
     ];
   };
 }
