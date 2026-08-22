@@ -40,6 +40,7 @@
     "type": "command",
     "command": "$HOME/.dotfiles/home/.claude/statusline.sh"
   },
+  "autoCompactWindow": 300000,
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark-ansi",
