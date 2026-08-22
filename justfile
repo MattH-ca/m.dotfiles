@@ -42,6 +42,17 @@ lint:
 test:
     tests/pi-calm.test.sh
 
+# Deliberately `pi update --extensions`, not `--all`: --all also self-updates
+# the pi CLI, which is brew-managed here and gets its upgrade from the rebuild.
+
+# Bring everything current: flake inputs, rebuild (incl. brew), Pi packages, npm globals
+upgrade:
+    nix flake update
+    ./rebuild.sh
+    pi update --extensions
+    pi update --models
+    npm update -g
+
 # Fixes `unknown install step: <stanza>`, a symlink source that "is not there",
 # or artifacts landing in the wrong order - all symptoms of a current cask
 # definition meeting a months-old pinned Homebrew. See CLAUDE.md for why this
