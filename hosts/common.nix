@@ -68,6 +68,7 @@
       "codex"
       "my-monkeys/tap/opensuperwhisper"
       "obsidian"
+      "zed"
       "veracrypt"
       "macfuse"
       # Adopted from manual installs: these were already in /Applications but
