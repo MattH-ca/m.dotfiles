@@ -98,6 +98,14 @@ in
   # the --cmd option if that ever changes.
   programs.zoxide.enable = true;
 
+  # ~/.ssh/config lives in the private repo (usernames/ports stay off GitHub)
+  # and is linked live, so edits there apply without a rebuild. IPs are not in
+  # it: /etc/hosts (hosts/common.nix, from the same repo's hosts.nix) resolves
+  # the names.
+  home.file.".ssh/config".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/dotfiles-private/ssh/config";
+
   # Edit-in-place: the real file stays in my repo, ~/.config just points at it.
   home.file.".config/wezterm".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/wezterm";

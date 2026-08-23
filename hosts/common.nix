@@ -1,8 +1,33 @@
 # Shared base for every host. Per-machine packages live in hosts/<name>.nix;
 # homebrew.brews/casks and home-manager package lists merge across modules.
-{ user, ... }:
+{ lib, user, fleetHosts, ... }:
 
 {
+  # /etc/hosts is generated from the fleet map in ~/dotfiles-private/hosts.nix
+  # (flake input `dotfiles-private`), so every machine resolves the same names
+  # the ssh config uses. knownSha256Hashes lets activation replace a known
+  # pre-nix file (stock macOS, and the Macbook's last hand-edited copy); on a
+  # host with other content, activation aborts and asks you to run
+  # `sudo mv /etc/hosts{,.before-nix-darwin}` first.
+  environment.etc."hosts" = {
+    text = ''
+      ##
+      # Host Database
+      #
+      # localhost is used to configure the loopback interface
+      # when the system is booting.  Do not change this entry.
+      ##
+      127.0.0.1 localhost
+      255.255.255.255 broadcasthost
+      ::1 localhost
+
+    '' + lib.concatStrings (lib.mapAttrsToList (name: ip: "${ip} ${name}\n") fleetHosts);
+    knownSha256Hashes = [
+      "c7dd0e2ed261ce76d76f852596c5b54026b9a894fa481381ffd399b556c0e2da" # stock macOS
+      "6c43f7b8368f2e7f361777c1ac271787202d326f85ab92bf1a9ec5d711b2c7de" # macbook, hand-edited pre-nix
+    ];
+  };
+
   # Determinate already manages the Nix daemon, so nix-darwin shouldn't.
   nix.enable = false;
 
