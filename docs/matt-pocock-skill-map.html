@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en" data-theme="sunset">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matt Pocock Skill Map</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge, .label) { overflow-wrap: anywhere; }
+  :where(img, svg, video, canvas, iframe) { max-width: 100%; height: auto; }
+  .mermaid { display: flex; justify-content: center; overflow-x: auto; }
+</style>
+</head>
+<body class="bg-base-100 text-base-content min-h-screen">
+<main class="mx-auto max-w-6xl p-6 lg:p-10 space-y-10">
+
+  <!-- Header -->
+  <section class="hero bg-base-200 rounded-box">
+    <div class="hero-content text-center py-10">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl font-bold">Matt Pocock Skill Map</h1>
+        <p class="py-4 text-base-content/80">
+          The question this page answers: <span class="font-semibold text-base-content">which skill do I reach for, and how does work flow between them?</span>
+          The collection is not a flat toolbox - it is one main flow (idea to ship), three on-ramps that merge into it,
+          a vocabulary layer underneath, and bridges for crossing context windows. The glue between skills is
+          <span class="font-semibold">files in your repo</span>, not direct calls.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <span class="badge badge-primary">main flow</span>
+          <span class="badge badge-secondary">on-ramps</span>
+          <span class="badge badge-accent">vocabulary layer</span>
+          <span class="badge badge-info">bridges</span>
+          <span class="badge badge-ghost">shared state files</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview diagram -->
+  <section class="space-y-3">
+    <h2 class="text-2xl font-bold">The flow at a glance</h2>
+    <p class="text-base-content/70">
+      Solid arrows are the route work travels. Dashed arrows are hand-offs between flows.
+      Click the diagram to annotate it directly.
+    </p>
+    <div class="card card-border bg-base-200">
+      <div class="card-body">
+        <pre class="mermaid">
+flowchart TD
+  subgraph ONRAMPS["On-ramps: situations that generate work"]
+    direction TB
+    triage["/triage<br/>bugs &amp; requests piling up<br/><i>only issues you didn't create</i>"]
+    diag["/diagnosing-bugs<br/>something's broken<br/><i>demands a red repro first</i>"]
+    way["/wayfinder<br/>huge foggy effort<br/><i>decisions, not deliverables</i>"]
+  end
+
+  subgraph MAIN["Main flow: idea to ship (one unbroken context window until tickets)"]
+    direction TB
+    grill["/grill-with-docs<br/>sharpen the idea by interview<br/>writes CONTEXT.md + ADRs"]
+    spec["/to-spec<br/>conversation to spec"]
+    tickets["/to-tickets<br/>tracer-bullet tickets<br/>with blocking edges"]
+    impl["/implement<br/>one ticket, fresh context"]
+    grill -->|"multi-session build"| spec
+    spec --> tickets
+    tickets --> impl
+    grill -->|"fits one session"| impl
+  end
+
+  subgraph INSIDE["Inside /implement"]
+    direction TB
+    tdd["/tdd<br/>red-green slices"]
+    review["/code-review<br/>Standards + Spec axes"]
+    tdd --> review
+  end
+  impl -.->|"drives internally"| tdd
+
+  proto["/prototype<br/>throwaway code answers<br/>one design question"]
+  grill <-.->|"/handoff out and back"| proto
+
+  research["/research<br/>background agent,<br/>cited markdown file"]
+  research -.->|"feeds the thinking"| grill
+
+  subgraph UPKEEP["Codebase health"]
+    improve["/improve-codebase-architecture<br/>survey deepening opportunities"]
+  end
+
+  triage -->|"agent-ready issues"| impl
+  way -->|"map clears: collapse<br/>decisions into a plan"| spec
+  diag -->|"post-mortem: no seam<br/>to lock the bug down"| improve
+  improve -.->|"picking one generates<br/>an idea"| grill
+
+  subgraph VOCAB["Vocabulary layer (model-invoked, runs beneath)"]
+    direction LR
+    domain["/domain-modeling<br/>domain language, ADRs"]
+    cdesign["/codebase-design<br/>deep modules, seams"]
+  end
+  VOCAB -.-> MAIN
+        </pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Layer cards -->
+  <section class="space-y-3">
+    <h2 class="text-2xl font-bold">The layers, one by one</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-primary">main flow</span> Idea to ship</h3>
+          <p><code>/grill-with-docs</code> interviews you to sharpen the idea, retaining what it learns in
+          <code>CONTEXT.md</code> and ADRs. Small builds go straight to <code>/implement</code>; big ones pass through
+          <code>/to-spec</code> and <code>/to-tickets</code> first.</p>
+          <p><code>/implement</code> is a composite: it drives <code>/tdd</code> internally one red-green slice at a
+          time, then closes with <code>/code-review</code> before committing. Both also work standalone.</p>
+          <p class="text-sm text-base-content/70">Context hygiene rule: keep grilling through ticketing in one
+          unbroken window (the ~120k-token "smart zone"), then run each <code>/implement</code> in a fresh session.</p>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-secondary">on-ramps</span> Where work arrives</h3>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><code>/triage</code> - moves raw incoming issues through triage roles into agent-ready briefs that
+            <code>/implement</code> picks up. Never for tickets <code>/to-tickets</code> made - those are already agent-ready.</li>
+            <li><code>/diagnosing-bugs</code> - refuses to theorise until one command reproduces the bug red; fixes with
+            a regression test. Hands off to the upkeep loop when the real finding is a missing seam.</li>
+            <li><code>/wayfinder</code> - for efforts too big to hold in one session. Charts decision tickets on the
+            tracker, resolves them one at a time, then merges at <code>/to-spec</code>. It hands off; it never builds.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-accent">vocabulary</span> The layer underneath</h3>
+          <p>Two model-invoked references, each the single source of truth for its words:</p>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><code>/domain-modeling</code> - the project's domain language: challenge fuzzy terms, resolve overloaded
+            words, record hard-to-reverse decisions as ADRs. <code>/grill-with-docs</code> drives it to keep
+            <code>CONTEXT.md</code> a clean glossary.</li>
+            <li><code>/codebase-design</code> - deep-module vocabulary (module, interface, depth, seam, adapter,
+            leverage, locality). <code>/tdd</code> and <code>/improve-codebase-architecture</code> both speak it.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-info">bridges</span> Crossing sessions</h3>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><code>/handoff</code> - compacts the conversation into a markdown file; you open a <em>new</em> session
+            against it. The bridge in both directions of the <code>/prototype</code> detour. Forks.</li>
+            <li><code>/compact</code> (built-in) - stays in the same conversation, summarising earlier turns. Use at
+            intentional phase breaks, never mid-phase. Continues.</li>
+          </ul>
+          <p class="text-sm text-base-content/70">Rule of thumb: <code>/handoff</code> forks; <code>/compact</code> continues.</p>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-ghost">standalone</span> Off the main flow</h3>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><code>/grill-me</code> - same interview as <code>/grill-with-docs</code> but stateless, for plans with no repo. Both wrap the <code>/grilling</code> primitive.</li>
+            <li><code>/prototype</code> - throwaway program answering one design question. Keep the answer, delete the code.</li>
+            <li><code>/research</code> - background agent reads primary sources, leaves a cited markdown file that feeds <code>/grill-with-docs</code>.</li>
+            <li><code>/teach</code> - multi-session learning in the current directory.</li>
+            <li><code>/bro</code> - restate the last message in plain language.</li>
+            <li><code>/resolving-merge-conflicts</code>, <code>/writing-great-skills</code> - situational references.</li>
+            <li><code>/ask-matt</code> - the router over all of the above.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title"><span class="badge badge-warning">precondition</span> One-time setup</h3>
+          <p><code>/setup-matt-pocock-skills</code> runs once per repo before the first engineering flow. It writes the
+          config the other skills assume:</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Issue tracker choice (GitHub, GitLab, local <code>.scratch/</code> markdown, or freeform)</li>
+            <li>The five triage labels (<code>needs-triage</code>, <code>needs-info</code>, <code>ready-for-agent</code>, <code>ready-for-human</code>, <code>wontfix</code>)</li>
+            <li>Domain doc layout (single <code>CONTEXT.md</code> or a monorepo <code>CONTEXT-MAP.md</code>)</li>
+          </ul>
+          <div role="alert" class="alert alert-warning alert-soft mt-2">
+            <span>Not yet run in this repo (no <code>docs/agents/</code> in dotfiles) - the tracker-dependent skills
+            (<code>/to-tickets</code>, <code>/triage</code>, <code>/to-spec</code>, <code>/wayfinder</code>) assume it.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Shared state -->
+  <section class="space-y-3">
+    <h2 class="text-2xl font-bold">Shared state: how skills actually talk to each other</h2>
+    <p class="text-base-content/70">
+      No skill invokes another across sessions. They coordinate through files committed to (or scratched into) the repo.
+    </p>
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+      <table class="table table-zebra">
+        <thead>
+          <tr><th>State</th><th>Written by</th><th>Read by</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CONTEXT.md</code></td>
+            <td><code>/grill-with-docs</code>, <code>/domain-modeling</code></td>
+            <td>every engineering skill</td>
+            <td>Living glossary - current state of the domain language, rewritten as understanding sharpens</td>
+          </tr>
+          <tr>
+            <td><code>docs/adr/</code></td>
+            <td><code>/grill-with-docs</code>, <code>/domain-modeling</code></td>
+            <td><code>/implement</code>, fresh sessions</td>
+            <td>Append-only decision history - stops a fresh agent relitigating settled choices</td>
+          </tr>
+          <tr>
+            <td><code>docs/agents/*.md</code></td>
+            <td><code>/setup-matt-pocock-skills</code></td>
+            <td><code>/to-spec</code>, <code>/to-tickets</code>, <code>/triage</code></td>
+            <td>Per-repo config: which tracker, which labels, which doc layout</td>
+          </tr>
+          <tr>
+            <td>Issue tracker<br/><span class="text-xs text-base-content/60">(GitHub Issues or <code>.scratch/&lt;feature&gt;/</code>)</span></td>
+            <td><code>/to-tickets</code>, <code>/to-spec</code>, <code>/triage</code>, <code>/wayfinder</code></td>
+            <td><code>/implement</code>, <code>/wayfinder</code></td>
+            <td>The work queue - tickets with blocking edges, specs, decision tickets</td>
+          </tr>
+          <tr>
+            <td>Handoff file</td>
+            <td><code>/handoff</code></td>
+            <td>the next session</td>
+            <td>Compacted conversation - carries context across the window boundary</td>
+          </tr>
+          <tr>
+            <td>Research file</td>
+            <td><code>/research</code></td>
+            <td><code>/grill-with-docs</code></td>
+            <td>Cited findings from primary sources - feeds the thinking, does not replace it</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footnote -->
+  <section>
+    <div role="alert" class="alert alert-info alert-soft">
+      <span><span class="font-semibold">Not part of the collection:</span> your <code>~/.claude/skills</code> folder also
+      holds <code>lavish</code> (Kun Chen), <code>no-mistakes</code>, <code>gnhf</code>, and <code>find-skills</code> -
+      separate installs that live alongside Matt Pocock's set. Source of the map: the <code>ask-matt</code> router skill,
+      cross-checked against each skill's own <code>SKILL.md</code>.</span>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs";
+
+  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const paint = document.createElement("canvas").getContext("2d");
+  function toRgba(color) {
+    paint.clearRect(0, 0, 1, 1);
+    paint.fillStyle = "#000";
+    paint.fillStyle = color;
+    paint.fillRect(0, 0, 1, 1);
+    return paint.getImageData(0, 0, 1, 1).data;
+  }
+  function compositeRgba(foreground, background) {
+    const fa = foreground[3] / 255;
+    const ba = background[3] / 255;
+    const a = fa + ba * (1 - fa);
+    if (a === 0) return [0, 0, 0, 0];
+    return [
+      (foreground[0] * fa + background[0] * ba * (1 - fa)) / a,
+      (foreground[1] * fa + background[1] * ba * (1 - fa)) / a,
+      (foreground[2] * fa + background[2] * ba * (1 - fa)) / a,
+      a * 255,
+    ];
+  }
+  function pageIsDark() {
+    const root = document.documentElement;
+    const rootBackground = toRgba(getComputedStyle(root).backgroundColor);
+    const bodyBackground = document.body ? toRgba(getComputedStyle(document.body).backgroundColor) : [0, 0, 0, 0];
+    const [r, g, b, a] = compositeRgba(bodyBackground, rootBackground);
+    if (a > 0) {
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.5;
+    }
+    const colorScheme = getComputedStyle(root).colorScheme;
+    if (colorScheme.includes("dark") && !colorScheme.includes("light")) return true;
+    if (colorScheme.includes("light") && !colorScheme.includes("dark")) return false;
+    return darkQuery.matches;
+  }
+
+  const diagrams = [...document.querySelectorAll(".mermaid")].map((el) => ({ el, src: el.innerHTML }));
+  let applied;
+  let rendering = false;
+  let queued = false;
+  function queueRender() {
+    queued = true;
+    if (rendering) return;
+    void render();
+  }
+  async function render() {
+    rendering = true;
+    try {
+      while (queued) {
+        queued = false;
+        const theme = pageIsDark() ? "dark" : "default";
+        if (theme === applied) continue;
+        mermaid.initialize({ startOnLoad: false, theme, securityLevel: "strict" });
+        for (const { el, src } of diagrams) {
+          el.removeAttribute("data-processed");
+          el.innerHTML = src;
+        }
+        try {
+          await mermaid.run({ nodes: diagrams.map((d) => d.el) });
+        } catch (error) {
+          console.error("Mermaid diagram render failed:", error);
+          return;
+        }
+        applied = theme;
+      }
+    } finally {
+      rendering = false;
+      if (queued) queueRender();
+    }
+  }
+
+  if (document.readyState === "complete") queueRender();
+  else window.addEventListener("load", queueRender, { once: true });
+  const themeObserver = new MutationObserver(queueRender);
+  for (const el of [document.documentElement, document.body]) {
+    if (!el) continue;
+    themeObserver.observe(el, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
+  }
+  document.addEventListener("change", queueRender, true);
+  document.addEventListener("transitionend", ({ propertyName }) => {
+    if (propertyName === "background-color") queueRender();
+  }, true);
+  darkQuery.addEventListener("change", queueRender);
+</script>
+</body>
+</html>
