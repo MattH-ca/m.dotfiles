@@ -131,8 +131,6 @@ To opt out, remove all three entries (the tap, the `gh-cli` brew, and the cask) 
   If you clone this repo, you'd silently inherit my agent instructions - edit or delete `home/AGENTS.md` if you don't want that.
 - The `cc` and `co` shell aliases in `home.nix` are high-agency shortcuts: `claude --dangerously-skip-permissions` and `codex --full-auto`.
   They're convenient for me, but know what they do before you use them.
-- The `oc` alias runs `bin/oc`, which hands OpenCode an `ANTHROPIC_API_KEY` from Automic Vault instead of letting `opencode auth login` write credentials to disk.
-  It needs that key saved (`av save ANTHROPIC_API_KEY`) and the script blessed (`av bless ~/dotfiles/bin/oc`); without both, plain `opencode` still works but has no provider configured.
 
 ## Repo tour
 

@@ -66,9 +66,6 @@ in
       # agent gh calls don't stop for an approval prompt on every exec
       cc = "${dotfiles}/bin/cc";
       co = "codex --sandbox workspace-write --ask-for-approval never";
-      # Blessed av script (see bin/oc): injects ANTHROPIC_API_KEY so opencode
-      # authenticates without a plaintext auth.json on disk
-      oc = "${dotfiles}/bin/oc";
       # Blessed av script (see bin/dsh): injects GH_TOKEN for DeepSeek Harness.
       # The alias shadows the raw npm binary, so launches go through the vault.
       dsh = "${dotfiles}/bin/dsh";

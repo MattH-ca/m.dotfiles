@@ -1,6 +1,6 @@
 # Task surface for this repo. Run `just` (or `just --list`) to see everything.
 #
-# The vault-blessed launchers in bin/ (cc, oc, fm-claude, no-mistakes-daemon)
+# The vault-blessed launchers in bin/ (cc, fm-claude, no-mistakes-daemon)
 # are deliberately NOT here. They are blessed without --endorse-launcher, and
 # routing them through just would put an extra process between your shell and
 # a blessed script - exactly what Automic Vault's caller verification checks.

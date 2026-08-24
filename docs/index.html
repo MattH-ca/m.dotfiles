@@ -1246,7 +1246,7 @@
               </tr>
               <tr>
                 <td><code>bin/</code></td>
-                <td>Blessed Automic Vault launchers (<code>cc</code>, <code>oc</code>, <code>fm-claude</code>, <code>no-mistakes-daemon</code>)</td>
+                <td>Blessed Automic Vault launchers (<code>cc</code>, <code>fm-claude</code>, <code>no-mistakes-daemon</code>)</td>
                 <td>Run directly; editing one voids its blessing</td>
               </tr>
               <tr>
@@ -1271,7 +1271,6 @@
 |-- AGENTS.md                 # repo-local notes (CLAUDE.md links here)
 |-- bin/                      # blessed vault launchers
 |   |-- cc                    # claude, with GH_TOKEN injected
-|   |-- oc                    # opencode, with ANTHROPIC_API_KEY injected
 |   |-- fm-claude             # First Mate crewmate launcher
 |   `-- no-mistakes-daemon    # foreground pipeline daemon
 |-- herdr-plugins/
@@ -1823,7 +1822,7 @@ herdr server stop     <span class="comment"># actually stop the session and its 
         </div>
       </section>
 
-      <section class="guide-section" id="agents" data-title="Claude Code Codex OpenCode Pi Calm Hermes First Mate aliases cc co oc nms permissions AGENTS skills memory status line hooks security sandbox crew launcher blessed">
+      <section class="guide-section" id="agents" data-title="Claude Code Codex OpenCode Pi Calm Hermes First Mate aliases cc co nms permissions AGENTS skills memory status line hooks security sandbox crew launcher blessed">
         <p class="eyebrow">08 / Agents</p>
         <h2>Shared rules, different permission models</h2>
         <p class="section-intro">Claude, Codex, and OpenCode share one global instruction file and one skills directory. Pi and Hermes are separate agents with their own state, and First Mate is a writable agent distro that coordinates crews across registered projects.</p>
@@ -1841,8 +1840,8 @@ herdr server stop     <span class="comment"># actually stop the session and its 
           </article>
           <article class="panel">
             <span class="panel-accent">OpenCode</span>
-            <h3><code>oc</code></h3>
-            <p>Runs <code>bin/oc</code>, a blessed launcher that injects <code>ANTHROPIC_API_KEY</code> so OpenCode authenticates without <code>opencode auth login</code> writing an <code>auth.json</code> to disk.</p>
+            <h3><code>opencode</code></h3>
+            <p>Installed as a Nix package, with no launcher alias and no provider key preconfigured. Authenticate it yourself if you use it; nothing in this repo stores or injects a key for it.</p>
           </article>
           <article class="panel">
             <span class="panel-accent">Pi</span>
@@ -1865,7 +1864,7 @@ herdr server stop     <span class="comment"># actually stop the session and its 
         </div>
 
         <div class="callout warning">
-          <strong>Security boundary:</strong> the <code>cc</code>, <code>co</code>, and <code>oc</code> aliases are intentionally autonomous. Start them only in a repository you trust. The planned sandbox network isolation is a separate security project and is not implemented by these dotfiles.
+          <strong>Security boundary:</strong> the <code>cc</code> and <code>co</code> aliases are intentionally autonomous. Start them only in a repository you trust. The planned sandbox network isolation is a separate security project and is not implemented by these dotfiles.
         </div>
 
         <h3>One instruction source</h3>
@@ -2382,7 +2381,7 @@ nix flake update nix-homebrew
         </details>
 
         <details>
-          <summary>An Automic Vault prompt appears on every launch of <code>cc</code>, <code>oc</code>, or the daemon</summary>
+          <summary>An Automic Vault prompt appears on every launch of <code>cc</code> or the daemon</summary>
           <div>
             <p>Expected. The launchers in <code>bin/</code> are blessed without launcher endorsement, so each launch raises one approval dialog on purpose. If a launcher stops working entirely instead, check whether the file was edited - any edit voids its blessing, and it has to be re-blessed with <code>av bless</code> against the exact path.</p>
           </div>
@@ -2556,11 +2555,6 @@ home.sessionPath = [ "/Applications/Automic Vault.app/Contents/MacOS" ];</code><
                 <td>Gives Claude a scoped GitHub token up front, so routine <code>gh</code> calls do not each raise a prompt.</td>
               </tr>
               <tr>
-                <td><code>bin/oc</code></td>
-                <td>OpenCode</td>
-                <td>Supplies the Anthropic key directly, so <code>opencode auth login</code> never writes plaintext credentials.</td>
-              </tr>
-              <tr>
                 <td><code>bin/fm-claude</code></td>
                 <td>A First Mate crewmate</td>
                 <td>Same token for spawned workers; a pure passthrough so First Mate keeps owning the flags.</td>
@@ -2711,8 +2705,8 @@ av bless ./run-eval.sh</code></pre>
           </article>
         </div>
         <div class="code-shell">
-          <div class="code-head"><span>Re-bless the four launchers</span></div>
-          <pre><code>for f in cc oc fm-claude no-mistakes-daemon; do
+          <div class="code-head"><span>Re-bless the three launchers</span></div>
+          <pre><code>for f in cc fm-claude no-mistakes-daemon; do
   av bless "$HOME/dotfiles/bin/$f"
 done
 av doctor</code></pre>
