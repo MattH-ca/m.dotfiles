@@ -2433,6 +2433,13 @@ ls -l "$HOME/.pi/agent/themes" "$HOME/.pi/agent/extensions" \
 printf '\nVault health:\n'
 av doctor
 
+printf '\nLauncher keys in the vault:\n'
+grep -ho '+[A-Z_][A-Z0-9_]*' "$HOME"/dotfiles/bin/* | tr -d '+' | sort -u |
+while read -r k; do
+  printf '%-24s ' "$k"
+  av list | grep -qx "$k" &amp;&amp; echo present || echo MISSING
+done
+
 printf '\nFirst Mate clone:\n'
 git -C "$HOME/firstmate" status --short --branch
 
@@ -2479,6 +2486,10 @@ brew services list</code></pre>
           <div class="check">
             <input id="audit-vault" type="checkbox">
             <label for="audit-vault"><code>av doctor</code> reports the hardened tools healthy.</label>
+          </div>
+          <div class="check">
+            <input id="audit-launcher-keys" type="checkbox">
+            <label for="audit-launcher-keys">No launcher key reports <code>MISSING</code> - the vault holds every key the <code>bin/</code> launchers inject.</label>
           </div>
           <div class="check">
             <input id="audit-auth" type="checkbox">
