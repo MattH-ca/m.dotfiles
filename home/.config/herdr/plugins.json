@@ -6,7 +6,7 @@
     "min_herdr_version": "0.8.0",
     "manifest_path": "/Users/matth/dotfiles/herdr-plugins/nms-autostart/herdr-plugin.toml",
     "plugin_root": "/Users/matth/dotfiles/herdr-plugins/nms-autostart",
-    "enabled": true,
+    "enabled": false,
     "startup": [
       {
         "command": [
