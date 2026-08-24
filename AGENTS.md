@@ -8,6 +8,20 @@ Deliberate decisions in this repo - do NOT silently revert them:
 - The launchers in `bin/` (`cc`, `fm-claude`, `no-mistakes-daemon`, `oc`) are blessed *without* `av bless --endorse-launcher`, so every launch raises an Automic Vault approval dialog. That per-launch checkpoint is a deliberate, reviewed decision - do not add `--endorse-launcher` to work around the prompts. The rationale is recorded in the private companion notes (`~/dotfiles-private/security-posture.md`).
 - The no-mistakes daemon is deliberately DISABLED on this machine (2026-08-23): the `nms-autostart` herdr plugin is switched off in `home/.config/herdr/plugins.json` and the launchd plist was removed. Do not start it unless the user asks. If they do ask, never run `no-mistakes daemon start` or `daemon restart` - both silently break the pipeline's GitHub access; the only correct way is the foreground `bin/no-mistakes-daemon` (the `nms` alias) in a herdr pane. Do not move the daemon to launchd - the full investigation of why that cannot work is in the private companion notes.
 
+## Agent skills
+
+### Issue tracker
+
+Issues live in the private companion repo `MattH-ca/dotfiles-private` (GitHub Issues); issues are deliberately disabled on this public repo. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.
