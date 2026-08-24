@@ -156,4 +156,10 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/bro";
   home.file.".codex/skills/bro".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/bro";
+  home.file.".agents/skills/eli5".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/eli5";
+  home.file.".claude/skills/eli5".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/eli5";
+  home.file.".codex/skills/eli5".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/eli5";
 }
