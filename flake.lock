@@ -20,11 +20,11 @@
     "dotfiles-private": {
       "flake": false,
       "locked": {
-        "lastModified": 1787506483,
-        "narHash": "sha256-RlqZ2FzcRYzgzUGdFQh2GdTd+HC2MhQsCUdcCA3esSg=",
+        "lastModified": 1787672968,
+        "narHash": "sha256-ss+95TuNN/BQ6N3Z0lWUajJxy9jTAXCDz9rzWx+s+uc=",
         "ref": "refs/heads/main",
-        "rev": "ccc1227f830a03bdffc55adf79cc2fe3f3eab803",
-        "revCount": 17,
+        "rev": "21733d777326a9edd1fd289c69a436aa87019f02",
+        "revCount": 25,
         "type": "git",
         "url": "file:///Users/matth/dotfiles-private"
       },
