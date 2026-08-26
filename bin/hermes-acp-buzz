@@ -1,0 +1,25 @@
+#!/bin/sh
+# Buzz -> Hermes ACP shim.
+#
+# Buzz's ACP harness (buzz-acp) hands the agent its Buzz credentials as
+# BUZZ_* environment variables so the agent can post messages with the
+# bundled `buzz` CLI from its terminal. Hermes's terminal sandbox strips
+# those same variables, because Hermes ships its own native Buzz platform
+# plugin that registers them as platform credentials (see
+# plugins/platforms/buzz in the hermes-agent package).
+#
+# Hermes provides a deliberate operator escape hatch: any env var named
+# _HERMES_FORCE_<NAME> is injected into terminal subprocesses as <NAME>,
+# past the credential scrub. Re-export the harness-supplied BUZZ_* vars
+# under that prefix, then exec the real hermes-acp. No secret values are
+# stored here - only names.
+for v in BUZZ_PRIVATE_KEY BUZZ_RELAY_URL BUZZ_AUTH_TAG BUZZ_CHANNELS \
+         BUZZ_HOME_CHANNEL BUZZ_ALLOWED_USERS BUZZ_ALLOW_ALL_USERS \
+         BUZZ_POLL_INTERVAL BUZZ_CLI_PATH BUZZ_TRANSPORT; do
+  eval "val=\${$v:-}"
+  if [ -n "$val" ]; then
+    export "_HERMES_FORCE_$v=$val"
+  fi
+done
+unset val
+exec /etc/profiles/per-user/matth/bin/hermes-acp "$@"
