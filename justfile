@@ -53,7 +53,6 @@ upgrade:
     pi update --models
     npm update -g
     uv tool upgrade --all
-    @echo "Not covered on purpose: 'no-mistakes update' resets the daemon - run it manually, then restart it with nms in a herdr pane."
 
 # Fixes `unknown install step: <stanza>`, a symlink source that "is not there",
 # or artifacts landing in the wrong order - all symptoms of a current cask
