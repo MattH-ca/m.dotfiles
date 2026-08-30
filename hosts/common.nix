@@ -100,6 +100,7 @@
       # Homebrew had never seen them, so bootstrap.sh could not restore them.
       "1password"
       "cleanshot"
+      "mullvad-vpn"
       "discord"
       "spotify"
       "brave-browser"
