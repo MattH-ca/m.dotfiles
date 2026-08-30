@@ -106,6 +106,7 @@
       "google-chrome"
       "github"           # GitHub Desktop
       "syncthing-app"    # renamed upstream from "syncthing"
+      "moonlight"        # game/desktop streaming client
     ];
   };
 }

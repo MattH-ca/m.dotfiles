@@ -13,7 +13,6 @@
   ];
   homebrew.casks = [
     "1password-cli"
-    "moonlight"        # game/desktop streaming client
     "openmtp"          # Android file transfer
     "seafile-client"
   ];
