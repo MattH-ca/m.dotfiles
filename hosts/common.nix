@@ -101,6 +101,7 @@
       "1password"
       "cleanshot"
       "mullvad-vpn"
+      "trezor-suite"
       "discord"
       "spotify"
       "brave-browser"
